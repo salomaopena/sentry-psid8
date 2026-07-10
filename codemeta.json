@@ -6,7 +6,7 @@
   "version": "0.3.0",
   "dateReleased": "2026-07-10",
   "license": "https://spdx.org/licenses/MIT",
-  "codeRepository": "https://github.com/[USUARIO]/sentry-psid8",
+  "codeRepository": "https://github.com/salomaopena/sentry-psid8",
   "programmingLanguage": "Python",
   "runtimePlatform": "Python 3.10+",
   "author": [

@@ -10,8 +10,8 @@ type: software
 version: "0.3.0"
 date-released: "2026-07-10"
 license: MIT
-repository-code: "https://github.com/[USUARIO]/sentry-psid8"
-url: "https://github.com/[USUARIO]/sentry-psid8"
+repository-code: "https://github.com/salomaopena/sentry-psid8"
+url: "https://github.com/salomaopena/sentry-psid8"
 doi: "10.5281/zenodo.[A_SER_EMITIDO]"
 keywords:
   - vigilância por vídeo
@@ -21,20 +21,20 @@ keywords:
   - memória temporal
   - vocabulário aberto
 authors:
-  - family-names: "[Sobrenome]"
-    given-names: "[Nome]"
+  - family-names: "Pena"
+    given-names: "Salomão Bento Nilo"
     orcid: "https://orcid.org/[0000-0000-0000-0000]"
-    affiliation: "[Afiliação]"
+    affiliation: "ISCED-Huíla | Universidade Federal de Uberlândia, Uberlândia, MG, Brasil"
 preferred-citation:
   type: article
   title: >-
     Rumo à Detecção de Incidentes de Segurança em Vídeo: a Arquitetura SENTRY
     e a Lacuna de Dados
   authors:
-    - family-names: "[Sobrenome]"
-      given-names: "[Nome]"
+    - family-names: "Pena"
+      given-names: "Salomão Bento Nilo"
       orcid: "https://orcid.org/[0000-0000-0000-0000]"
-      affiliation: "[Afiliação]"
+      affiliation: "ISCED-Huíla | Universidade Federal de Uberlândia, Uberlândia, MG, Brasil"
   year: 2026
   journal: "[Periódico ou conferência após aceitação]"
   doi: "[DOI do artigo após publicação]"
