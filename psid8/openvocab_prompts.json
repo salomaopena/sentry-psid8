@@ -1,0 +1,82 @@
+{
+ "accident": {
+  "class_prompt": "accident",
+  "compositional_prompts": [
+   "truck vehicle collision at public street",
+   "car other at daytime",
+   "car vehicle collision at public street",
+   "motorcycle other at public street",
+   "car vehicle collision at daytime"
+  ]
+ },
+ "intrusion": {
+  "class_prompt": "intrusion",
+  "compositional_prompts": [
+   "person fence climbing at perimeter fence",
+   "person perimeter crossing at perimeter fence",
+   "person restricted area entry at controlled access",
+   "person restricted area entry at perimeter fence",
+   "fire_flame perimeter crossing at perimeter fence"
+  ]
+ },
+ "vandalism": {
+  "class_prompt": "vandalism",
+  "compositional_prompts": [
+   "property graffiti at daytime",
+   "property graffiti at indoor",
+   "property property destruction at indoor",
+   "glass_window glass breaking at other",
+   "property graffiti at controlled access"
+  ]
+ },
+ "suspicious_object": {
+  "class_prompt": "suspicious object",
+  "compositional_prompts": [
+   "weapon weapon present at daytime",
+   "weapon weapon present at other",
+   "weapon weapon present at indoor",
+   "weapon weapon present at controlled access",
+   "person abandoned bag at controlled access"
+  ]
+ },
+ "suspicious_behavior": {
+  "class_prompt": "suspicious behavior",
+  "compositional_prompts": [
+   "person running out of context at public street",
+   "person loitering at public street",
+   "person running out of context at controlled access",
+   "person other at public street",
+   "person chasing at controlled access"
+  ]
+ },
+ "fire": {
+  "class_prompt": "fire",
+  "compositional_prompts": [
+   "fire_flame open flame at indoor",
+   "fire_flame open flame at night",
+   "fire_flame structure fire at indoor",
+   "car vehicle fire at public street",
+   "fire_flame open flame at daytime"
+  ]
+ },
+ "fall": {
+  "class_prompt": "fall",
+  "compositional_prompts": [
+   "person fall from height at indoor",
+   "person faint at indoor",
+   "person person collapsed at indoor",
+   "person other at indoor",
+   "person fall from height at controlled access"
+  ]
+ },
+ "crime": {
+  "class_prompt": "crime",
+  "compositional_prompts": [
+   "person assault at public street",
+   "person fighting at indoor",
+   "person fighting at public street",
+   "person other at indoor",
+   "person armed threat at indoor"
+  ]
+ }
+}

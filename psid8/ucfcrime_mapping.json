@@ -1,0 +1,16 @@
+{
+ "Abuse": "crime",
+ "Assault": "crime",
+ "Fighting": "crime",
+ "Robbery": "crime",
+ "Shooting": "crime",
+ "Stealing": "crime",
+ "Shoplifting": "crime",
+ "RoadAccidents": "accident",
+ "Burglary": "intrusion",
+ "Vandalism": "vandalism",
+ "Arson": "fire",
+ "Arrest": null,
+ "Explosion": null,
+ "Normal": null
+}

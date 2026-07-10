@@ -1,0 +1,31 @@
+{
+  "title": "SENTRY + PSID-8: detecção espaço-temporal de incidentes e conjunto de ferramentas de benchmark",
+  "description": "Implementação de referência da arquitetura SENTRY (detector de estágio único com memória temporal de características e atenção condicionada por movimento) e do conjunto de ferramentas PSID-8 para anotação e avaliação de incidentes de segurança física em vídeo de vigilância. Acompanha o artigo 'Rumo à Detecção de Incidentes de Segurança em Vídeo: a Arquitetura SENTRY e a Lacuna de Dados'.",
+  "upload_type": "software",
+  "license": "MIT",
+  "version": "0.3.0",
+  "language": "por",
+  "keywords": [
+    "vigilância por vídeo",
+    "detecção de incidentes",
+    "segurança física",
+    "detecção de objetos",
+    "memória temporal",
+    "vocabulário aberto",
+    "benchmark"
+  ],
+  "creators": [
+    {
+      "name": "[Sobrenome], [Nome]",
+      "affiliation": "[Afiliação]",
+      "orcid": "[0000-0000-0000-0000]"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "[DOI do artigo após publicação]",
+      "resource_type": "publication-article"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# SENTRY base configuration.
+# NOTE (paper Sec. III-C): values below define the SEARCH SPACE; final values are
+# selected on the VALIDATION split only and reported together with the full
+# space. Nothing here is a scientific "default".
+seed: 0
+seeds_final: [0, 1, 2]
+imgsz: 640
+window:      {search: [4, 8, 16]}
+hidden_ch:   {search: [64, 128, 256]}
+gate_kernel: {search: [1, 3]}
+alpha_init:  0.5
+lambdas:                       # [box, cls, dfl, tc]
+  search:
+    box: [5.0, 7.5, 10.0]
+    cls: [0.3, 0.5, 1.0]
+    dfl: [1.0, 1.5, 2.0]
+    tc:  [0.1, 0.5, 1.0, 2.0]
+link_iou: 0.5
+max_gap: 5
+min_persistence_frames:        # n_c per class - TUNE ON VALIDATION
+  0: 3    # accident
+  1: 50   # suspicious_behavior
+  2: 5    # crime
+  3: 2    # fire
+  4: 3    # intrusion
+  5: 375  # suspicious_object (~15 s @25fps; scenario T_abandon rules)
+  6: 3    # fall
+  7: 8    # vandalism
