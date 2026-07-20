@@ -1,48 +1,51 @@
-# Publicação e emissão de DOI (GitHub + Zenodo)
+# Publishing and minting a DOI (GitHub + Zenodo)
 
-Fluxo para tornar o código citável com um identificador permanente.
+Workflow to make the code citable with a permanent identifier.
 
-## Antes de começar: preencher os campos marcados
-Substitua todos os marcadores `[...]` nos seguintes arquivos:
-- `CITATION.cff` — nome, ORCID, afiliação, usuário do GitHub, DOI do artigo
-- `.zenodo.json` — idem (metadados que o Zenodo lê no arquivamento)
-- `codemeta.json` — idem
-- `README.md` (seção "Como citar") — chaves BibTeX, nome, DOI
-- `LICENSE` — nome do titular do copyright
+## Before you start: fill in the marked fields
 
-## Passo a passo
+Replace every `[...]` placeholder in the following files:
 
-1. **Publicar no GitHub.** Crie o repositório `sentry-psid8` (público) e envie o
-   código. Confirme que `CITATION.cff`, `.zenodo.json`, `codemeta.json`, `LICENSE`
-   e `README.md` estão na raiz. O GitHub exibirá o botão "Cite this repository".
+- `CITATION.cff` — name, ORCID, affiliation, GitHub username, paper DOI
+- `.zenodo.json` — same (metadata Zenodo reads at archiving time)
+- `codemeta.json` — same
+- `README.md` ("How to cite" section) — BibTeX keys, name, DOI
+- `LICENSE` — copyright holder name
 
-2. **Conectar o Zenodo ao GitHub.** Em https://zenodo.org, faça login com a conta
-   do GitHub (menu do perfil → GitHub). Na lista de repositórios, ative o
-   interruptor ao lado de `sentry-psid8`. Isso autoriza o Zenodo a arquivar
-   automaticamente cada nova *release*.
+## Step by step
 
-3. **Criar uma release no GitHub.** No repositório, vá em Releases → "Create a new
-   release", defina uma tag (ex.: `v1.0.0`) e publique. O Zenodo detecta a release,
-   arquiva o instantâneo do código e emite o DOI (normalmente em poucos minutos).
+1. **Publish on GitHub.** Create the public repository `sentry-psid8` and push
+   the code. Confirm that `CITATION.cff`, `.zenodo.json`, `codemeta.json`,
+   `LICENSE`, and `README.md` are in the root. GitHub will show the
+   "Cite this repository" button.
 
-4. **Recolher os DOIs.** O Zenodo emite dois identificadores:
-   - **Concept DOI** — aponta sempre para a versão mais recente. **É este que se
-     cita no artigo.**
-   - **Version DOI** — específico da release arquivada (ex.: v1.0.0).
+2. **Connect Zenodo to GitHub.** At https://zenodo.org, log in with your GitHub
+   account (profile menu -> GitHub). In the repository list, toggle the switch
+   next to `sentry-psid8`. This authorizes Zenodo to archive each new release.
 
-5. **Atualizar os metadados com o DOI.** Substitua `10.5281/zenodo.[A_SER_EMITIDO]`
-   pelo concept DOI em `CITATION.cff`, `.zenodo.json` e `README.md`, e faça um novo
-   commit. (Opcionalmente, crie uma nova release para arquivar a versão já com o
-   DOI embutido.)
+3. **Create a release on GitHub.** In the repository, go to Releases ->
+   "Create a new release", set a tag (e.g., `v1.0.0`), and publish. Zenodo
+   detects the release, archives the code snapshot, and mints the DOI (usually
+   within minutes).
 
-6. **Citar no artigo.** Use o concept DOI do Zenodo na seção de disponibilidade de
-   código/dados do artigo. O link do GitHub pode ser mencionado como repositório de
-   desenvolvimento, mas a referência arquivável é o DOI do Zenodo.
+4. **Collect the DOIs.** Zenodo mints two identifiers:
+   - **Concept DOI** — always points to the latest version. **Cite this one in
+     the paper.**
+   - **Version DOI** — specific to the archived release (e.g., v1.0.0).
 
-## Observações
-- O DOI do artigo (passo dos metadados) só existe após a aceitação/publicação; até
-  lá, mantenha o marcador e atualize depois.
-- Para o benchmark de vídeo PSID-8 (trabalho futuro), use um depósito Zenodo
-  separado com `upload_type: dataset` e licença CC BY 4.0.
-- Versione os metadados junto com o código: cada release deve refletir a versão
-  correta em `CITATION.cff` e `codemeta.json`.
+5. **Update the metadata with the DOI.** Replace
+   `10.5281/zenodo.[TO_BE_MINTED]` with the concept DOI in `CITATION.cff`,
+   `.zenodo.json`, and `README.md`, then commit.
+
+6. **Cite in the paper.** Use the Zenodo concept DOI in the code/data
+   availability section. The GitHub link may be mentioned as the development
+   repository, but the archival reference is the Zenodo DOI.
+
+## Notes
+
+- The paper DOI exists only after acceptance/publication; keep the placeholder
+  until then and update afterwards.
+- For the PSID-8 video benchmark (future work), use a separate Zenodo deposit
+  with `upload_type: dataset` and a CC BY 4.0 license.
+- Version the metadata alongside the code: each release should reflect the
+  correct version in `CITATION.cff` and `codemeta.json`.

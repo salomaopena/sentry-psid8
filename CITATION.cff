@@ -1,40 +1,56 @@
 cff-version: 1.2.0
-message: "Se você usar este software, por favor cite o artigo e o software abaixo."
-title: "SENTRY + PSID-8: detecção espaço-temporal de incidentes e conjunto de ferramentas de benchmark"
+message: "If you use this software, please cite both the paper and the software below."
+title: "SENTRY + PSID-8: spatiotemporal incident detection and benchmark toolkit"
 abstract: >-
-  Implementação de referência da arquitetura SENTRY (detector de estágio único
-  com memória temporal de características e atenção condicionada por movimento) e
-  do conjunto de ferramentas PSID-8 para anotação e avaliação de incidentes de
-  segurança física em vídeo de vigilância.
+  Reference implementation of the SENTRY architecture (a single-stage detector
+  with a temporal feature memory and motion-conditioned attention) and the
+  PSID-8 toolkit for annotating and evaluating physical-security incidents in
+  surveillance video.
 type: software
-version: "0.3.0"
+version: "1.0.0"
 date-released: "2026-07-10"
 license: MIT
 repository-code: "https://github.com/salomaopena/sentry-psid8"
 url: "https://github.com/salomaopena/sentry-psid8"
-doi: "10.5281/zenodo.[A_SER_EMITIDO]"
+doi: "10.5281/zenodo.[TO_BE_MINTED]"
 keywords:
-  - vigilância por vídeo
-  - detecção de incidentes
-  - segurança física
-  - detecção de objetos
-  - memória temporal
-  - vocabulário aberto
+  - video surveillance
+  - incident detection
+  - physical security
+  - object detection
+  - temporal memory
+  - open vocabulary
 authors:
   - family-names: "Pena"
     given-names: "Salomão Bento Nilo"
-    orcid: "https://orcid.org/[0000-0000-0000-0000]"
-    affiliation: "ISCED-Huíla | Universidade Federal de Uberlândia, Uberlândia, MG, Brasil"
+    orcid: "https://orcid.org/0000-0001-5973-0612"
+    affiliation: "Federal University of Uberlândia"
+  - family-names: "Souza"
+    given-names: "Jefferson R."
+    orcid: "https://orcid.org/0000-0001-6422-4722"
+    affiliation: "Federal University of Uberlândia"
+  - family-names: "Nomura"
+    given-names: "Shigueo"
+    orcid: "https://orcid.org/0000-0001-5553-6820"
+    affiliation: "Federal University of Uberlândia"
 preferred-citation:
   type: article
   title: >-
-    Rumo à Detecção de Incidentes de Segurança em Vídeo: a Arquitetura SENTRY
-    e a Lacuna de Dados
+    Towards Physical Security Incident Detection in Video Surveillance:
+    The SENTRY Architecture and the Data Gap
   authors:
     - family-names: "Pena"
       given-names: "Salomão Bento Nilo"
-      orcid: "https://orcid.org/[0000-0000-0000-0000]"
-      affiliation: "ISCED-Huíla | Universidade Federal de Uberlândia, Uberlândia, MG, Brasil"
+      orcid: "https://orcid.org/0000-0001-5973-0612"
+      affiliation: "Federal University of Uberlândia"
+    - family-names: "Souza"
+      given-names: "Jefferson R."
+      orcid: "https://orcid.org/0000-0001-6422-4722"
+      affiliation: "Federal University of Uberlândia"
+    - family-names: "Nomura"
+      given-names: "Shigueo"
+      orcid: "https://orcid.org/0000-0001-5553-6820"
+      affiliation: "Federal University of Uberlândia"
   year: 2026
-  journal: "[Periódico ou conferência após aceitação]"
-  doi: "[DOI do artigo após publicação]"
+  journal: "[Journal or conference after acceptance]"
+  doi: "[Paper DOI after publication]"

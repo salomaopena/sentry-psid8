@@ -89,10 +89,28 @@ def test_iou_helpers():
     print("test_iou_helpers OK")
 
 
+def test_event_confusion_matrix():
+    from sentry.metrics import event_confusion_matrix
+    gts = [{"class_id": 6, "t_start": 10, "t_end": 30},
+           {"class_id": 2, "t_start": 50, "t_end": 70}]
+    preds = [{"class_id": 6, "t_start": 11, "t_end": 29, "confidence": 0.9},
+             {"class_id": 7, "t_start": 52, "t_end": 69, "confidence": 0.6},
+             {"class_id": 3, "t_start": 200, "t_end": 220, "confidence": 0.4}]
+    cm = event_confusion_matrix(preds, gts, n_classes=8, tiou_thr=0.3)
+    assert cm[6, 6] == 1, "correct hit on the diagonal"
+    assert cm[2, 7] == 1, "class confusion must NOT be counted as a miss"
+    assert cm[8, 3] == 1, "unmatched prediction = false alarm (background row)"
+    assert cm[6, 8] == 0 and cm.sum() == 3
+    cm2 = event_confusion_matrix([], gts, n_classes=8, tiou_thr=0.3)
+    assert cm2[6, 8] == 1 and cm2[2, 8] == 1, "unmatched GT = miss (background column)"
+    print("test_event_confusion_matrix OK")
+
+
 if __name__ == "__main__":
     test_iou_helpers()
     test_tube_linking_and_alerts()
     test_tube_gap_break()
     test_event_metrics()
     test_splits_camera_disjoint_and_coverage()
+    test_event_confusion_matrix()
     print("\nALL OFFLINE TESTS PASSED")

@@ -86,3 +86,37 @@ def bootstrap_ci(values, n_boot: int = 1000, alpha: float = 0.05, seed: int = 0)
 def streams_per_gpu(fps_measured: float, stream_fps: float = 25.0) -> int:
     """Operational reading of Sec. V-F."""
     return int(fps_measured // stream_fps)
+
+
+def event_confusion_matrix(preds, gts, n_classes: int = 8, tiou_thr: float = 0.5):
+    """Event-level confusion matrix.
+
+    Rows = ground truth, columns = prediction. An extra final row/column holds
+    "background": the last column counts GT events that no prediction matched
+    (misses), and the last row counts predictions that matched no GT event
+    (false alarms). Matching is greedy by temporal IoU, IGNORING class, so that
+    a genuine class confusion (event found, wrong label) is distinguishable from
+    a miss (event not found at all) - the distinction the paper needs.
+
+    Returns an (n_classes+1, n_classes+1) integer array.
+    """
+    cands = []
+    for pi, p in enumerate(preds):
+        for gi, g in enumerate(gts):
+            v = tiou(p["t_start"], p["t_end"], g["t_start"], g["t_end"])
+            if v >= tiou_thr:
+                cands.append((v, pi, gi))
+    used_p, used_g = set(), set()
+    cm = np.zeros((n_classes + 1, n_classes + 1), dtype=int)
+    for v, pi, gi in sorted(cands, key=lambda x: -x[0]):
+        if pi in used_p or gi in used_g:
+            continue
+        used_p.add(pi); used_g.add(gi)
+        cm[gts[gi]["class_id"], preds[pi]["class_id"]] += 1     # hit (right or wrong class)
+    for gi, g in enumerate(gts):
+        if gi not in used_g:
+            cm[g["class_id"], n_classes] += 1                   # missed event
+    for pi, p in enumerate(preds):
+        if pi not in used_p:
+            cm[n_classes, p["class_id"]] += 1                   # false alarm
+    return cm

@@ -1,74 +1,86 @@
 # SENTRY + PSID-8
 
-Reference implementation of the two artifacts of the paper:
+Reference implementation of the two artifacts of the paper *"Towards Physical
+Security Incident Detection in Video Surveillance: The SENTRY Architecture and
+the Data Gap"*:
 
-- **PSID-8 toolkit** — everything needed to build the benchmark: compositional
-  annotation schema (imported verbatim from the CVAT label config piloted on
-  images), annotation guide, scenario-stratified camera-disjoint splits,
-  inter-annotator agreement, statistics, and integrity checks.
-- **SENTRY** — single-stage detector with a Temporal Feature Memory (ConvGRU per
-  FPN level) + motion-gated attention, temporal-consistency loss, tube linking,
-  event confirmation, and structured alert records.
+- **PSID-8 toolkit** — everything needed to build the benchmark: the
+  compositional annotation schema (imported verbatim from the CVAT label
+  configuration piloted on images), annotation guide, scenario-stratified
+  camera-disjoint splits, inter-annotator agreement, statistics, and integrity
+  checks.
+- **SENTRY** — a single-stage detector with a Temporal Feature Memory (ConvGRU
+  per FPN level) and motion-conditioned attention, a temporal-consistency loss,
+  tube linking, event confirmation, and structured alert records.
 
 ## Layout
-```
+
+```text
 psid8/            benchmark toolkit (numpy/sklearn - runs anywhere)
 sentry/           model, losses, data, tubes, metrics (PyTorch for the model;
                   tubes and metrics are pure numpy)
-configs/          base config (hyperparameters = search space, not fixed values)
+sentryc           physical-cyber convergence layer. 
+configs/          base configuration (hyperparameters = search space)
 protocol/         anti-manipulation pre-registration
 notebooks/        Kaggle workflow (2x T4)
 tests/            unit tests for the offline-runnable parts
 ```
 
 ## Running on Kaggle
-Option A (recommended): upload this repository zip as a Kaggle Dataset named
-`sentry-psid8`; Kaggle auto-extracts it. In the notebook:
+
+Upload this repository as a Kaggle Dataset named `sentry-psid8`; Kaggle
+auto-extracts it. In the notebook:
+
 ```python
 import sys; sys.path.insert(0, "/kaggle/input/sentry-psid8/sentry-psid8")
 ```
-Option B: `!git clone <your-repo-url> /kaggle/working/repo` then insert that path.
-Option C: `pip install -e /kaggle/working/repo` (pyproject.toml included).
+
+Alternatives: `!git clone https://github.com/salomaopena/sentry-psid8.git` or `pip install -e` (pyproject.toml
+included).
 
 ## Integrity rule
+
 No number enters the paper unless it comes from logs produced by this
-repository. The test split is frozen in Phase 1 and evaluated ONCE per final model.
+repository. The test split is frozen in Phase 1 and evaluated once per final
+model (see `protocol/PREREGISTRATION.md`).
 
-## Como citar
+## How to cite
 
-Se este software ou o conjunto de ferramentas for útil ao seu trabalho, cite tanto
-o artigo quanto o software arquivado.
+If this software or toolkit is useful to your work, please cite both the paper
+and the archived software.
 
-**Artigo:**
+**Paper:**
+
 ```bibtex
-@article{[chave]2026sentry,
-  title   = {Rumo à Detecção de Incidentes de Segurança em Vídeo: a Arquitetura SENTRY e a Lacuna de Dados},
-  author  = {[Sobrenome], [Nome]},
-  journal = {[Periódico ou conferência após aceitação]},
+@article{[key]2026sentry,
+  title   = {Towards Physical Security Incident Detection in Video Surveillance:
+             The SENTRY Architecture and the Data Gap},
+  author  = {Pena, Salomão Bento Nilo; Souza, Jefferson R.; Nomura, Shigueo},
+  journal = {[Journal or conference after acceptance]},
   year    = {2026},
-  doi     = {[DOI do artigo]}
+  doi     = {[Paper DOI]}
 }
 ```
 
-**Software (DOI do Zenodo, versão arquivada):**
+**Software (Zenodo DOI, archived version):**
 
 ```bibtex
-@software{[chave]2026sentry_sw,
-  title     = {SENTRY + PSID-8: detecção espaço-temporal de incidentes e conjunto de ferramentas de benchmark},
-  author    = {[Sobrenome], [Nome]},
+@software{[key]2026sentry_sw,
+  title     = {SENTRY + PSID-8: spatiotemporal incident detection and benchmark toolkit},
+  author    = {Pena, Salomão Bento Nilo; Souza, Jefferson R.; Nomura, Shigueo},
   year      = {2026},
-  version   = {0.3.0},
+  version   = {1.0.0},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.[A_SER_EMITIDO]},
-  url       = {https://github.com/[USUARIO]/sentry-psid8}
+  doi       = {10.5281/zenodo.[TO_BE_MINTED]},
+  url       = {https://github.com/salomaopena/sentry-psid8}
 }
 ```
 
-O botão "Cite this repository" do GitHub lê o arquivo `CITATION.cff` e gera as
-citações automaticamente em APA e BibTeX.
+GitHub's "Cite this repository" button reads `CITATION.cff` and generates APA
+and BibTeX citations automatically.
 
-## Licença
+## License
 
-Código sob licença MIT (ver `LICENSE`). O conjunto de dados de vídeo PSID-8,
-quando publicado, será distribuído sob licença de dados própria (CC BY 4.0),
-em depósito separado.
+Code released under the MIT License (see `LICENSE`). The PSID-8 video dataset,
+once published, will be distributed under a separate data license (CC BY 4.0)
+in its own deposit.

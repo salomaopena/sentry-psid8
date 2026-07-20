@@ -5,7 +5,6 @@ persists from the first to the last frame of the event. Multi-label is allowed
 (a box may carry more than one class, e.g., accident + fall).
 
 ## Principles
-
 1. **Annotate the event, not the visual category.** A person lying down is NOT a
    fall; annotate fall only if the transition was observed in the clip.
 2. **Annotate visible evidence.** For fire, the box covers visible flame/smoke.
@@ -18,7 +17,6 @@ persists from the first to the last frame of the event. Multi-label is allowed
    `hard_negative` tag and the reason (e.g., "person lying, no transition").
 
 ## Tooling flow
-
 CVAT (label config = attributes.json) -> export **COCO 1.0** (never YOLO:
 attributes would be lost) -> `coco_to_yolo.py` -> `build_splits.py` ->
 `agreement.py` on the double-annotated sample (>=20%) -> `dataset_stats.py` ->
@@ -26,7 +24,6 @@ attributes would be lost) -> `coco_to_yolo.py` -> `build_splits.py` ->
 `adjudications.csv`.
 
 ## Per-class rules (summary; full operational definitions in schema.json)
-
 - **accident**: first contact -> scene at rest; include all parties.
 - **suspicious_behavior**: requires a pattern (>=2 passes, prolonged
   observation, access testing, following). A single pass is NOT suspicious.

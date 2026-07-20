@@ -1,4 +1,4 @@
-# Fixar versões exatas no Kaggle e registrá-las na Tabela IV-B do artigo
+# Lock exact versions on Kaggle and record them in Table IV-B of the paper
 torch>=2.2
 ultralytics>=8.2
 numpy
@@ -6,3 +6,5 @@ opencv-python
 scikit-learn
 pyyaml
 tqdm
+matplotlib
+networkx

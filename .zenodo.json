@@ -1,30 +1,40 @@
 {
-  "title": "SENTRY + PSID-8: detecção espaço-temporal de incidentes e conjunto de ferramentas de benchmark",
-  "description": "Implementação de referência da arquitetura SENTRY (detector de estágio único com memória temporal de características e atenção condicionada por movimento) e do conjunto de ferramentas PSID-8 para anotação e avaliação de incidentes de segurança física em vídeo de vigilância. Acompanha o artigo 'Rumo à Detecção de Incidentes de Segurança em Vídeo: a Arquitetura SENTRY e a Lacuna de Dados'.",
+  "title": "SENTRY + PSID-8: spatiotemporal incident detection and benchmark toolkit",
+  "description": "Reference implementation of the SENTRY architecture (a single-stage detector with a temporal feature memory and motion-conditioned attention) and the PSID-8 toolkit for annotating and evaluating physical-security incidents in surveillance video. Accompanies the paper 'Towards Physical Security Incident Detection in Video Surveillance: The SENTRY Architecture and the Data Gap'.",
   "upload_type": "software",
   "license": "MIT",
-  "version": "0.3.0",
-  "language": "por",
+  "version": "1.0.0",
+  "language": "eng",
   "keywords": [
-    "vigilância por vídeo",
-    "detecção de incidentes",
-    "segurança física",
-    "detecção de objetos",
-    "memória temporal",
-    "vocabulário aberto",
+    "video surveillance",
+    "incident detection",
+    "physical security",
+    "object detection",
+    "temporal memory",
+    "open vocabulary",
     "benchmark"
   ],
   "creators": [
     {
-      "name": "[Sobrenome], [Nome]",
-      "affiliation": "[Afiliação]",
-      "orcid": "[0000-0000-0000-0000]"
+      "name": "Pena, Salomão Bento Nilo Pena",
+      "affiliation": "Instituto Superior de Ciências da Educação da Huíla; Federal University of Uberlândia",
+      "orcid": "0000-0001-5973-0612"
+    },
+    {
+      "name": "Souza, Jefferson R.",
+      "affiliation": "Federal University of Uberlândia",
+      "orcid": "0000-0001-6422-4722"
+    },
+    {
+      "name": "Nomura, Shigueo",
+      "affiliation": "Federal University of Uberlândia",
+      "orcid": "0000-0001-5553-6820"
     }
   ],
   "related_identifiers": [
     {
       "relation": "isSupplementTo",
-      "identifier": "[DOI do artigo após publicação]",
+      "identifier": "[Paper DOI after publication]",
       "resource_type": "publication-article"
     }
   ]
