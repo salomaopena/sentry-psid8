@@ -3,44 +3,63 @@
   "accident": {
     "class_prompt": "accident",
     "compositional_prompts": [
-      "car crash on road", "vehicle collision on street",
-      "car accident with people", "overturned vehicle on road",
+      "car crash on road",
+      "vehicle collision on street",
+      "car accident with people",
+      "overturned vehicle on road",
       "pedestrian hit by car"
     ]
   },
   "crime": {
     "class_prompt": "crime",
     "compositional_prompts": [
-      "person punching another person", "people fighting",
-      "person attacking someone", "armed robbery in store",
+      "person punching another person",
+      "people fighting",
+      "person attacking someone",
+      "armed robbery in store",
       "person grabbing bag from victim"
     ]
   },
   "intrusion": {
     "class_prompt": "intrusion",
     "compositional_prompts": [
-      "person breaking into building", "burglar forcing a door",
-      "person climbing through window", "intruder entering room at night",
+      "person breaking into building",
+      "burglar forcing a door",
+      "person climbing through window",
+      "intruder entering room at night",
       "person breaking a lock"
     ]
   },
   "vandalism": {
     "class_prompt": "vandalism",
     "compositional_prompts": [
-      "person breaking property", "person smashing object",
-      "person kicking and destroying property", "person damaging a car",
+      "person breaking property",
+      "person smashing object",
+      "person kicking and destroying property",
+      "person damaging a car",
       "person throwing object to break something"
     ]
   },
   "fire": {
     "class_prompt": "fire",
     "compositional_prompts": [
-      "fire and flames", "building on fire",
-      "person setting fire", "smoke and flames indoors",
+      "fire and flames",
+      "building on fire",
+      "person setting fire",
+      "smoke and flames indoors",
       "large fire with smoke"
     ]
   },
-  "suspicious_behavior": {"class_prompt": "suspicious behavior", "compositional_prompts": ["person loitering suspiciously"]},
-  "suspicious_object": {"class_prompt": "suspicious object", "compositional_prompts": ["abandoned bag unattended"]},
-  "fall": {"class_prompt": "fall", "compositional_prompts": ["person falling to the ground"]}
+  "suspicious_behavior": {
+    "class_prompt": "suspicious behavior",
+    "compositional_prompts": ["person loitering suspiciously"]
+  },
+  "suspicious_object": {
+    "class_prompt": "suspicious object",
+    "compositional_prompts": ["abandoned bag unattended"]
+  },
+  "fall": {
+    "class_prompt": "fall",
+    "compositional_prompts": ["person falling to the ground"]
+  }
 }
