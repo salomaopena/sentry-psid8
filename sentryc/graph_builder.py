@@ -31,7 +31,7 @@ as a convention, so a future edit cannot silently violate it.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Sequence
+from typing import Any, Sequence
 
 import networkx as nx
 

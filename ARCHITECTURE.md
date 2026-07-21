@@ -23,7 +23,7 @@ Two artifacts share one repository:
 The 8 canonical classes and their **fixed integer ids** (used everywhere —
 labels, prompts, metrics, plots):
 
-```html
+```
 0 accident   1 suspicious_behavior   2 crime      3 fire
 4 intrusion  5 suspicious_object     6 fall       7 vandalism
 ```
@@ -32,7 +32,7 @@ labels, prompts, metrics, plots):
 
 ## 2. Repository map
 
-```html
+```
 sentry/                    the model and the evaluation machinery
   modules.py               ConvGRU, MotionGate, TFMLevel, TemporalFeatureMemory
   ultralytics_adapter.py   SentryYOLO: injects the TFM into a YOLO model
@@ -73,22 +73,18 @@ Everything downstream of dataset ingestion speaks one format. **Adding a new
 dataset means writing one adapter** to this contract; nothing else changes.
 
 **Clip layout on disk**
-
-```txt
+```
 clips/<clip_id>/frames/00001.jpg, 00002.jpg, ...     (1-based, zero-padded)
 clips/<clip_id>/labels/00001.txt, ...                (YOLO: `cls cx cy w h`, normalized)
 ```
-
 A frame with no `.txt` (or an empty one) is background. Labels use the canonical
 class ids above — e.g. a fall is class `6`, never `0`.
 
 **manifest.json** — one entry per clip:
-
 ```json
 {"clip_id": "Home_01__video_3", "camera_id": "Home_01", "scenario": "Home",
  "classes": [6], "n_frames": 312}
 ```
-
 `classes: []` marks a negative clip. `camera_id` is what `build_splits.py`
 keeps disjoint across train/val/test; when a corpus does not document cameras,
 a proxy (e.g. the environment folder) is used **and declared in the paper**.
@@ -100,7 +96,7 @@ only has to emit the same layout + manifest.
 
 ## 4. Data flow, end to end
 
-```html
+```
 raw dataset
    │  adapter (e.g. le2i_to_clips.py)
    ▼
@@ -131,7 +127,6 @@ a style preference — it is the pre-registered protocol.
 ## 5. The model, module by module
 
 ### `modules.py`
-
 - `ConvGRUCell` — Eq. (1). Gates `z`, `r` computed jointly; state `h_t` keeps
   spatial structure (it is a conv, not a flatten).
 - `MotionGate` — `M_t = σ(W_m * |P_t − P_{t−1}|)`. A learned scalar `α` (one per
@@ -146,7 +141,6 @@ a style preference — it is the pre-registered protocol.
   videos and results are silently wrong.
 
 ### `ultralytics_adapter.py`
-
 `SentryYOLO` wraps the Detect head's `forward` so the TFM sits between neck and
 head. The official backbone/neck/head and their losses stay untouched; the
 architectural delta *is* the TFM. Touch points isolated in `_find_detect_head()`
@@ -157,13 +151,11 @@ Key API: `reset_stream()`, `freeze_base()`, `last_evidence` (mean motion-gate
 activation of the current frame, carried into alert records).
 
 ### `tubes.py`
-
 Greedy online linking by class + IoU, tolerating gaps. `confirm_events` filters
 tubes by a per-class minimum persistence `n_c` and emits the structured alert.
 Pure numpy — testable without a GPU.
 
 ### `metrics.py`
-
 - `event_auc`, `event_prf` — matching by temporal IoU, greedy, per class.
 - `event_confusion_matrix` — matches **ignoring class**, so a wrong-label hit
   (class confusion) is distinguishable from a miss. Extra row/column =
@@ -171,7 +163,6 @@ Pure numpy — testable without a GPU.
 - `bootstrap_ci` — percentile CI over per-video metrics.
 
 ### `seeds.py`
-
 `run_over_seeds(pipeline_fn)` runs the **pre-declared** seeds `[0,1,2]`, writes
 one JSON per seed (so an interrupted session resumes), and aggregates to
 mean ± std + bootstrap CI. Splits stay fixed across seeds, so reported variance
@@ -213,6 +204,27 @@ isolates training stochasticity.
 | A no-fall Le2i clip labelled as a fall | Some ADL videos carry a dummy interval `[1,2]` with no boxes inside | a clip is a fall **only if** a box lies inside the interval |
 | `build_splits` raises "could not guarantee all classes" | Too few cameras per scenario (Le2i: 2) | falls back to global camera-level allocation, recorded as `"stratification": "global_fallback"` |
 | Kaggle paths not found | Mount layout differs per account | always read `!ls /kaggle/input`; it may be `/kaggle/input/<slug>/` or `/kaggle/input/datasets/<user>/<slug>/` |
+| `v8DetectionLoss` raises `TypeError: list indices must be integers or slices, not str` | Ultralytics changed the training-mode model output between versions: 8.3.49 (pinned for the paper's Kaggle runs) returns the plain per-level feature list directly; 8.4.x returns a `{"boxes","scores","feats"}` dict instead, and that version's loss expects the whole dict, not just `["feats"]` | `sentry/train.py` feeds the raw model output to the criterion **unmodified** (each version's loss knows its own shape) and uses `extract_feat_list()` only for the auxiliary `L_tc` term, which needs the plain feature list regardless of version |
+| `coco_to_yolo.py` produces a `labels/` folder nothing downstream can find | The script never used its `images_dir` argument and wrote a flat `labels/` folder incompatible with the `clips/<clip_id>/frames+labels` contract | fixed: `--layout clips` (default) writes labels next to the clip's existing frames and validates every referenced image exists; `--layout flat` preserves the legacy single-folder workflow and now actually copies/symlinks images, including background images (see below) |
+| `integrity_check.py` raises `AttributeError: module 'datetime' has no attribute 'UTC'` | `datetime.UTC` requires Python 3.11+; `pyproject.toml` declares `requires-python = ">=3.10"` | changed to `datetime.timezone.utc`, available since Python 3.2 |
+
+### 7.1 Stage B training: correctness and the batching fix (audited and rewritten)
+
+An audit of this repository found that `sentry/train.py` was **silently non-functional**: it hard-coded `decoded = None`, so its loss branch never executed, `loss_total` stayed a plain Python `0.0` for every step of every epoch, and `torch.is_tensor(loss_total)` was therefore always `False` -- `backward()`/`optimizer.step()` never ran, for any epoch, while the script printed `"epoch N: ok"` and saved a checkpoint that was just the TFM's random initialization. No exception, no warning: a plausible-looking log and a useless checkpoint. This is the single most dangerous kind of bug in a research pipeline, because it does not fail, it fabricates a false success.
+
+The script has been rewritten (`sentry/train.py`, reusing `sentry/stageb_train.py` unchanged) to mirror exactly the supervised approach validated interactively in the Kaggle notebook (cell [5], which produced the epoch-ablation numbers in Table 2: v8DetectionLoss as the primary signal, L_tc as an auxiliary regularizer). Two properties are now enforced by tests (`tests/test_train.py`), not just asserted in prose:
+
+- **Loud failure.** An epoch in which every mini-batch has zero labeled frames raises `RuntimeError` naming the exact reason, instead of completing and looking successful.
+- **Real gradient flow.** `test_stage_b_actually_updates_tfm_weights` snapshots the TFM's parameters, trains for two epochs on tiny synthetic data, and asserts every parameter tensor changed. This is the regression test for the bug above: on the old script, this assertion would have failed with `0/27` tensors changed.
+
+**The batching optimization** (requested explicitly: time and memory both matter). The old loop nested `for clip in batch: for frame in clip:`, i.e. one Python-level forward+backward graph construction per *(clip, frame)* pair. `ConvGRUCell`, `MotionGate` and `TemporalFeatureMemory` (`sentry/modules.py`) already operate on an arbitrary batch dimension -- nothing about the model required this. The rewritten loop stacks the `N` clips of a mini-batch (via the new `sentry.data.collate_batched`) and calls the model **once per timestep for the whole batch**: `T` forward calls instead of `N*T`. Measured on this repository's own test hardware (CPU, tiny `yolov8n`, `batch_size=2`, `window=4`, 4 synthetic clips):
+
+| | model() calls | wall-clock (1 epoch) |
+|---|---|---|
+| old per-clip loop | 16 | 1.81 s |
+| batched (this fix) | 8 | 0.45 s |
+
+A 2x reduction in forward-call count (matching `batch_size` exactly, as designed) produced a 4.05x wall-clock reduction on CPU, because batching also amortizes fixed Python/autograd/kernel-launch overhead per call, not just the raw compute. On GPU, mixed precision (`torch.autocast` + `GradScaler`) is additionally enabled by default (`device.type == "cuda"`), further reducing memory and step time; it is left off on CPU, where it has no benefit and can be numerically fragile. Neither change alters what is computed, only how many calls it takes and at what numeric precision -- the loss formula, the labels, and the model are identical to the validated notebook run.
 
 ---
 
@@ -273,11 +285,11 @@ network anomaly:
 
 Five classes satisfy all three and are therefore **seed-eligible**:
 
-  intrusion · suspicious_behavior · vandalism · fall · suspicious_object
+    intrusion · suspicious_behavior · vandalism · fall · suspicious_object
 
 Three classes do not, and are **consequence-only**:
 
-  accident · fire · crime
+    accident · fire · crime
 
 They stay fully part of PSID-8 and of the standalone SENTRY evaluation; what
 they may not do is *seed* a correlation. A fire is not disambiguated by a port
@@ -292,6 +304,36 @@ resident or an intruder and the pixels do not say which. That is not a model
 failure — it is ambiguity that only a non-visual signal (an authentication
 event, or its absence) can resolve. Convergence is therefore *derived* from a
 measured result, not assumed.
+
+### 10.1b Scope: what this work does and does not claim
+
+This work does not pursue explainability as a contribution. `TemporalRuleScorer`
+exists solely as the H3 predictive-merit comparator (does the GNN out-detect
+hand-written rules on identical inputs?); it is not offered as an
+interpretability deliverable, and no claim about explaining model decisions to
+an operator is made anywhere in this module. Readers looking for that
+contribution will not find it here by design.
+
+### 10.1c Positioning against recent multi-modal cyber-physical fusion work
+
+A relevant point of comparison is UMTD-Net (a 2025 cross-modal attention
+architecture fusing video, audio and network telemetry for smart-city threat
+detection), which reports high aggregate F1/AUC but leaves several gaps that
+motivate design choices in this module:
+
+| Dimension | UMTD-Net | This work |
+|---|---|---|
+| Output granularity | binary threat/normal per input window | per-class event: track, time span, confidence trajectory |
+| Fusion justification | none stated; all modalities fused indiscriminately for every input | explicit per-class eligibility (`SEED_ELIGIBLE`), grounded in a measured result (§8: intrusion F1 = 0.000 under vision alone) |
+| Temporal precedence between modalities | not modelled (fusion is over a synchronized window) | first-class: `precedes` edges, `time_to_detection`, `lead_time_gain` |
+| Missing-modality behaviour | acknowledged as an open limitation ("future work") | structural: an absent modality is simply an absent neighbour in the graph; no retraining or special-casing needed |
+| Cross-instance correspondence between modalities | not described; the three benchmarks used (UCF-Crime, UrbanSound8K, TON_IoT) are independent corpora with no documented real pairing | declared explicitly: Degree-1 experiments use a synthetic network stream with a stated coupling parameter κ and declared negative controls (see the experiment plan) — the pairing is a stated assumption, not a silent one |
+
+The comparison is deliberately narrow: it does not include explainability
+(out of scope here, see §10.1b) or raw aggregate accuracy, since the two
+systems have not been evaluated on the same corpus. Its purpose is to state
+plainly where this module's design choices depart from a recent representative
+system, not to claim general superiority.
 
 ### 10.2 Load-bearing: the constraint is code, not convention
 
@@ -309,7 +351,7 @@ rejected as seeds **and** must remain reachable as successors.
 |---|---|
 | `network_stream.py` | `NetworkEvent` schema + `NetworkEventSource` adapter. The `anomaly_type` vocabulary is CLOSED (`port_scan`, `new_device`, `exfiltration`, `dos_camera`, `unauthorized_access`) — an open vocabulary would make the fusion-justification probabilities unestimable. Not an IDS: the detector is a separate component. |
 | `graph_builder.py` | Nodes `PhysicalEvent` / `NetworkEvent` / `Asset`; edges `temporal_proximity`, `spatial_colocation`, `asset_relation`, `precedes`. Enforces the seed constraint. Exposes `FusionJustification` (gain = P(e_n\|e_p,class) − P(e_n), plus Amb(e_p), Amb(e_n)) with configurable thresholds θ, τ. |
-| `gnn_correlation.py` | `HeteroGNNScorer` (small typed-attention GNN) and `TemporalRuleScorer` (interpretable baseline) behind one `CorrelationModel` interface, so H3 can compare them like for like. |
+| `gnn_correlation.py` | `HeteroGNNScorer` (small typed-attention GNN) and `TemporalRuleScorer` (fixed-rule baseline) behind one `CorrelationModel` interface, so H3 can compare their predictive merit on identical inputs. Explainability is explicitly out of scope for this work; the rule baseline exists to answer whether the GNN detects and ranks convergent incidents better than hand-written rules, nothing further is claimed for it. |
 | `alerts.py` | `ConvergentAlert`, including `time_to_detection` measured from the FIRST contributing event of either modality — lead time is a primary claim (H3), so it is a first-class field, not a derived afterthought. |
 | `metrics.py` | Convergent F1/AUC (importing the temporal-IoU machinery from `sentry/metrics.py`, never re-implementing it), lead-time gain with bootstrap CI, false-positive reduction, and modality contribution. |
 

@@ -8,7 +8,6 @@ gains do not concentrate on the temporal class, the hypothesis will be reported
 as refuted.
 
 ## Phases (mandatory order)
-
 1. **Freeze**: integrity checks PASS -> commit registered -> hashes recorded.
    No script opens the test split until Phase 5.
 2. **Stage A**: frame-level training (Ultralytics) - model selection by
@@ -22,6 +21,5 @@ as refuted.
    A convergence failure is reported as a failure, not as a number.
 
 ## Prohibitions
-
 No peeking at the test split; no seed cherry-picking; no post-hoc removal of
 hard examples; no new metrics chosen after seeing results.

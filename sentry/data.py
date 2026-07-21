@@ -67,3 +67,37 @@ class VideoClipDataset(Dataset):
 
 def collate_clips(batch):
     return batch                                     # list of clips; loop handles it
+
+
+def collate_batched(batch):
+    """Stack N same-window-length clip samples for batched Stage B training.
+
+    Unlike `collate_clips` (which returns the list as-is, for a per-clip
+    Python loop), this groups the images of all N clips at each timestep into
+    one (N,3,H,W) tensor, so the model is called once per timestep for the
+    WHOLE mini-batch instead of once per (clip, timestep) pair. This is what
+    `sentry/train.py` uses; `ConvGRUCell`/`MotionGate`/`TemporalFeatureMemory`
+    already operate on an arbitrary batch dimension (see sentry/modules.py), so
+    no change to the model is needed, only to how the loop feeds it.
+
+    Every sample in `batch` must share the same window length T, which holds
+    for any single VideoClipDataset instance (fixed `window` argument).
+
+    Returns:
+      images:     (N, T, 3, H, W) tensor
+      labels_by_t: list of length T; labels_by_t[t] is a list of N per-clip
+                   (k,5) label tensors for timestep t (k varies per clip/frame)
+      clip_ids:   list of N clip identifiers, for logging
+    """
+    assert _TORCH, "torch is required to collate a training batch"
+    t_lens = {b["images"].shape[0] for b in batch}
+    assert len(t_lens) == 1, (
+        f"collate_batched requires a single fixed window length across the "
+        f"batch, got {t_lens}. Build the DataLoader from one VideoClipDataset "
+        f"(one fixed `window`) at a time."
+    )
+    T = t_lens.pop()
+    images = torch.stack([b["images"] for b in batch])         # (N, T, 3, H, W)
+    labels_by_t = [[b["labels"][t] for b in batch] for t in range(T)]
+    clip_ids = [b["clip_id"] for b in batch]
+    return {"images": images, "labels_by_t": labels_by_t, "clip_ids": clip_ids}

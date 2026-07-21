@@ -3,7 +3,7 @@
 co-occurrence and negative ratio. Produces the basis of the paper's
 dataset table."""
 import json, sys
-from collections import Counter, defaultdict
+from collections import Counter
 import itertools
 
 def main(manifest_path, splits_path):

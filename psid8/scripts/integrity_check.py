@@ -27,7 +27,7 @@ def main(manifest_path, splits_path):
     for s, cs in classes_per_split.items():
         missing = all_classes - cs
         assert not missing, f"Split {s} missing classes {missing}"
-    report = {"timestamp_utc": datetime.datetime.now(datetime.UTC).isoformat(),
+    report = {"timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "manifest_sha256": sha256(manifest_path),
               "splits_sha256": sha256(splits_path),
               "checks": ["camera_disjoint", "class_coverage"], "status": "PASS"}

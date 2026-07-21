@@ -89,6 +89,38 @@ def test_iou_helpers():
     print("test_iou_helpers OK")
 
 
+def test_aggregate_cli_matches_seeds_core():
+    """sentry/aggregate.py (the file-based CLI) must produce numerically
+    identical results to sentry/seeds.py::aggregate (the in-memory core used by
+    run_over_seeds). Before this test existed, the two had separate bootstrap
+    implementations with different output schemas that could silently drift."""
+    import json
+    import tempfile
+    import os as _os
+    from sentry.aggregate import aggregate as agg_cli
+    from sentry.seeds import aggregate as agg_core
+
+    vals = [0.627, 0.688, 0.711]
+    with tempfile.TemporaryDirectory() as d:
+        files = []
+        for i, v in enumerate(vals):
+            p = _os.path.join(d, f"metrics_seed{i}.json")
+            json.dump({"fall": {"mAP50": v}, "seed": i}, open(p, "w"))
+            files.append(p)
+        table = agg_cli(files)
+
+    per_seed = [{"fall/mAP50": v, "seed": i} for i, v in enumerate(vals)]
+    core = agg_core(per_seed)
+
+    assert table["fall/mAP50"]["mean"] == core["fall/mAP50"]["mean"]
+    assert table["fall/mAP50"]["std"] == core["fall/mAP50"]["std"]
+    assert table["fall/mAP50"]["ci95"] == core["fall/mAP50"]["ci95"]
+    assert table["fall/mAP50"]["per_seed"] == core["fall/mAP50"]["per_seed"]
+    assert "seed" not in table, "'seed' must not be treated as a metric"
+    assert table["fall/mAP50"]["formatted"].startswith("0.7")
+    print("test_aggregate_cli_matches_seeds_core OK")
+
+
 def test_event_confusion_matrix():
     from sentry.metrics import event_confusion_matrix
     gts = [{"class_id": 6, "t_start": 10, "t_end": 30},
@@ -113,4 +145,5 @@ if __name__ == "__main__":
     test_event_metrics()
     test_splits_camera_disjoint_and_coverage()
     test_event_confusion_matrix()
+    test_aggregate_cli_matches_seeds_core()
     print("\nALL OFFLINE TESTS PASSED")

@@ -9,8 +9,6 @@ All functions save a PNG and return the path. Colours are colour-blind safe and
 readable in greyscale.
 """
 from __future__ import annotations
-import json
-import os
 
 import numpy as np
 import matplotlib

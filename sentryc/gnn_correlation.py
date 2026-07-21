@@ -1,11 +1,14 @@
 """Correlation models for SENTRY-C.
 
 Two scorers share ONE interface (`CorrelationModel`), so the protocol of the
-thesis (H3) can compare them like for like:
+thesis (H3) can compare them on identical inputs:
 
-  * `TemporalRuleScorer` — interpretable baseline. Fixed windows and precedence
-    rules, no learning. It exists to answer the question a reviewer will ask:
-    does the GNN buy anything a competent engineer would not get from rules?
+  * `TemporalRuleScorer` — a fixed-window, fixed-precedence-rule baseline with no
+    learned parameters. It exists to answer a predictive-merit question, and
+    only that: does the GNN detect and rank convergent incidents better than a
+    competent engineer would with hand-written rules? This module is a
+    comparator for H3, not a deliverable on interpretability or explainability
+    — that dimension is explicitly out of scope for this work.
   * `HeteroGNNScorer` — a small typed-attention GNN (HGT/GAT-style) over the
     heterogeneous event graph. Deliberately small: a research prototype meant to
     train on one GPU, not a production system.
@@ -22,7 +25,6 @@ PyTorch installed.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
 
 import numpy as np
 import networkx as nx
@@ -54,7 +56,7 @@ class CorrelationModel(ABC):
 
 
 class TemporalRuleScorer(CorrelationModel):
-    """Interpretable baseline (thesis H3 comparator).
+    """Fixed-rule baseline: the H3 predictive-merit comparator.
 
     Rule set, all parameters explicit:
       1. A seed with no network evidence scores its own confidence, damped by

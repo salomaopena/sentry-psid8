@@ -224,8 +224,7 @@ def test_feature_encoding_is_torch_free_and_correct():
     """The graph->feature contract (where GNN bugs hide) is numpy-only, so it is
     verified without a GPU."""
     import numpy as np
-    from sentryc import (gather_neighbors, encode_physical, encode_network,
-                         PHYS_DIM, NET_DIM)
+    from sentryc import gather_neighbors, PHYS_DIM
     from sentryc.graph_builder import SEED_ELIGIBLE
 
     b = EventGraphBuilder(delta_t=600, assets=_assets())
@@ -266,7 +265,6 @@ def test_feature_encoding_is_torch_free_and_correct():
 def test_encoding_gives_no_class_onehot_to_consequences():
     """A consequence-only class must not occupy a seed-class one-hot slot; it is
     context, never a correlation target."""
-    import numpy as np
     from sentryc import encode_physical, PHYS_DIM
     d = {"cls": "fire", "class_id": 3, "t_start": 10, "t_end": 20,
          "confidence": 0.9, "evidence": {}, "seed": False}

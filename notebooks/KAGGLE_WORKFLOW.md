@@ -19,6 +19,7 @@ python -m sentry.eval --alerts alerts_val.json --gt-events gt_val.json
 
 # 4) Latency/FPS: torch.cuda.Event on 1x T4, batch=1, half=True,
 #    50 warm-up iterations, then mean over 500 frames.
-```text
+```
+
 Notes: (i) pin and record ALL versions; (ii) export W&B logs into the repo;
 (iii) the test split is only touched in Phase 5 of PREREGISTRATION.md.

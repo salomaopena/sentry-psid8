@@ -4,10 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentry-psid8"
-version = "1.0.0"
+version = "1.1.0"
 description = "SENTRY spatiotemporal incident detector + PSID-8 benchmark toolkit"
 requires-python = ">=3.10"
-dependencies = ["numpy", "pyyaml", "matplotlib", "networkx"]
+dependencies = [
+    "numpy", "pyyaml", "matplotlib", "networkx",
+    "torch>=2.2", "ultralytics>=8.2", "opencv-python", "scikit-learn", "tqdm",
+]
 
 [tool.setuptools.packages.find]
 include = ["sentry*", "sentryc*", "psid8*"]
