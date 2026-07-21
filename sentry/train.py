@@ -60,48 +60,73 @@ def set_seed(seed: int):
         pass
 
 
-def build_criterion(det_model, box=7.5, cls=0.5, dfl=1.5):
-    """Construct v8DetectionLoss with the hyperparameters it reads.
+def build_criterion(det_model, box=7.5, cls=0.5, dfl=1.5, epochs=1):
+    """Construct the detection loss for `det_model`, delegating the choice of
+    loss CLASS to Ultralytics itself via `det_model.init_criterion()`.
 
-    v8DetectionLoss needs the DetectionModel itself (not its inner Sequential)
-    and reads `hyp.box` / `hyp.cls` / `hyp.dfl` by ATTRIBUTE access, so
-    `model.args` must be a namespace, not a dict. See ARCHITECTURE.md section 6
-    for why this specific construction is required.
+    Ultralytics' own `DetectionModel.init_criterion()` returns `E2ELoss(self)`
+    when `model.end2end` is True (e.g. YOLO26, which drops DFL by setting
+    `reg_max=1` on its head) and `v8DetectionLoss(self)` otherwise (e.g.
+    YOLOv8, YOLO11). Delegating to it, instead of hard-coding
+    `v8DetectionLoss`, is what makes this function work across YOLO
+    generations without a per-architecture branch here: `v8DetectionLoss`
+    itself already sets `self.use_dfl = m.reg_max > 1`, so it degrades
+    correctly on a DFL-free head, and `E2ELoss` (YOLO26) wraps two
+    `v8DetectionLoss` instances (one2many/one2one branches) with the same
+    calling convention.
+
+    `model.args` must still be a namespace (not a dict), since both loss
+    classes read `hyp.box`/`hyp.cls`/`hyp.dfl` by attribute; `epochs` is
+    included because `E2ELoss.decay()` reads `hyp.epochs` if `criterion.update()`
+    is ever called to anneal the one2many/one2one loss weighting over
+    training (not called by default here; the initial 0.8/0.2 weighting is
+    used throughout Stage B, which is deliberately short and fixed-schedule).
     """
-    from ultralytics.utils.loss import v8DetectionLoss
-    det_model.args = SimpleNamespace(box=box, cls=cls, dfl=dfl)
-    criterion = v8DetectionLoss(det_model)
-    if isinstance(getattr(criterion, "hyp", None), dict):
-        criterion.hyp = SimpleNamespace(**criterion.hyp)
-    return criterion
+    det_model.args = SimpleNamespace(box=box, cls=cls, dfl=dfl, epochs=epochs)
+    return det_model.init_criterion()
 
 
-def extract_feat_list(raw):
+def extract_feat_list(raw, branch: str = "one2one"):
     """Extract the plain list of per-level feature-map tensors from a model's
-    raw training-mode output, regardless of which Ultralytics generation
-    produced it.
+    raw training-mode output, regardless of which Ultralytics generation or
+    head design produced it.
 
-    Ultralytics changed this shape between versions actually observed in this
-    project: the version pinned on Kaggle for the paper's runs (8.3.49)
-    returns the feature-map list directly; a newer version (8.4.x, seen in
-    this repository's CI/test environment) returns a dict
-    `{"boxes":..., "scores":..., "feats": [P3, P4, P5]}` instead, and its
-    `v8DetectionLoss` expects to be handed that whole dict (not just the
-    feature list). This helper only concerns the AUXILIARY L_tc term, which
-    always needs the plain per-level feature list; the detection-loss call
-    itself is fed `raw` unmodified in `run_stage_b`, so each Ultralytics
-    version gets the input shape its own loss implementation expects.
+    Three shapes have been observed in this project and are handled here:
+      1. plain list/tuple of per-level tensors (Ultralytics 8.3.49, YOLOv8,
+         pinned on Kaggle for the paper's runs);
+      2. a flat dict `{"boxes","scores","feats"}` (Ultralytics 8.4.x, YOLOv8
+         single-head models);
+      3. a nested dict `{"one2many": {...}, "one2one": {...}}`, each an
+         instance of shape 2 (YOLO26's dual-head, end-to-end design).
+
+    For shape 3, `branch` selects which head's features feed the auxiliary
+    L_tc term. "one2one" (the default) is the NMS-free, inference-time head
+    that YOLO26 is deployed with (matching what a latency/export measurement
+    would use), so temporal consistency is measured on the branch that is
+    actually used at inference.
     """
     if isinstance(raw, dict):
+        if "one2many" in raw and "one2one" in raw:
+            return extract_feat_list(raw[branch], branch=branch)
         if "feats" in raw:
             return list(raw["feats"])
         raise KeyError(
-            f"model output is a dict without a 'feats' key (keys: {list(raw)}); "
-            "extract_feat_list needs updating for this Ultralytics version."
+            f"model output is a dict with unrecognized keys {list(raw)}; "
+            "extract_feat_list needs updating for this Ultralytics version/head."
         )
     if isinstance(raw, (list, tuple)):
         return list(raw)
     return [raw]
+
+
+def _criterion_box_gain(criterion) -> float:
+    """Read the box-loss gain regardless of criterion type: v8DetectionLoss
+    exposes `.hyp.box` directly; E2ELoss (YOLO26) nests it under `.one2many.hyp`
+    since E2ELoss itself has no `.hyp` attribute of its own."""
+    hyp = getattr(criterion, "hyp", None)
+    if hyp is not None:
+        return float(hyp.box)
+    return float(criterion.one2many.hyp.box)
 
 
 def run_stage_b(model, criterion, dataloader, epochs: int, lr: float,
@@ -128,7 +153,7 @@ def run_stage_b(model, criterion, dataloader, epochs: int, lr: float,
     except TypeError:
         # older torch: torch.amp.GradScaler / torch.cuda.amp.GradScaler took no
         # positional device argument
-        scaler = torch.amp.GradScaler(enabled=use_amp)
+        scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
     history = []
 
     for epoch in range(epochs):
@@ -267,8 +292,9 @@ def main():
 
     det_model = model.base
     box, cls, dfl, lambda_tc = args.lambdas
-    criterion = build_criterion(det_model, box=box, cls=cls, dfl=dfl)
-    print(f"criterion OK | nc={det_model.model[-1].nc} | hyp.box={criterion.hyp.box}")
+    criterion = build_criterion(det_model, box=box, cls=cls, dfl=dfl, epochs=args.epochs)
+    print(f"criterion OK | nc={det_model.model[-1].nc} | type={type(criterion).__name__} | "
+          f"box_gain={_criterion_box_gain(criterion)}")
 
     history = run_stage_b(model, criterion, dl, epochs=args.epochs, lr=args.lr,
                           lambda_tc=lambda_tc, device=device, use_amp=use_amp)

@@ -1,189 +1,234 @@
-# Thesis Notes — Code Audit Session (keep updated)
+# Notas para a Tese — Sessão de Auditoria de Código (manter actualizado)
 
-This file exists so nothing discussed during the engineering audit gets lost
-before the thesis is written. Add to it; do not let it go stale.
-
----
-
-## 1. Scope of impact: does the audit invalidate Article 1's results?
-
-**No.** This needs to be stated clearly and defended if a reviewer asks the
-same question.
-
-The critical bug found in this audit (`sentry/train.py` silently training
-nothing) lived in a **standalone CLI script**. The numbers reported in the
-paper (Table 2, the epoch ablation at 5/10/30 epochs) came from a **different,
-already-working code path**: the Kaggle notebook's Stage B cell (`[5]`), which
-had its own inline training loop, independent of `sentry/train.py`, and was
-already using the correct supervised formulation (`v8DetectionLoss` +
-auxiliary `L_tc`).
-
-The evidence that this inline loop trained for real, not the reasoning alone:
-the training loss (`det`) fell **monotonically** as epochs increased (16.7 →
-14.1 → 12.7 at 5/10/30 epochs). That pattern cannot occur if
-`backward()`/`optimizer.step()` never ran — it is the exact signature the
-broken standalone script could **not** have produced (there, the loss would
-have stayed at its initial value forever, as reproduced in
-`tests/test_train.py`).
-
-**Conclusion:** the reported overfitting (training loss falls while test F1
-degrades) is a real finding about data scarcity, not an artifact of broken
-code. Article 1's diagnosis stands. The bug is a latent defect in an
-alternative entry point that was never used to produce a published number —
-important to fix so nobody trips over it later, but it does not change what
-has already been reported.
-
-A second, narrower point: the `coco_to_yolo.py` layout fix also does not
-affect Article 1. The Le2i pipeline (`le2i_to_clips.py`) writes directly to the
-canonical `clips/<id>/frames+labels` layout without ever going through
-`coco_to_yolo.py`. That fix matters for the **future** PSID-8 video benchmark
-(CVAT → COCO → `coco_to_yolo.py`), not for anything already published.
+Este ficheiro existe para que nada do que foi discutido durante a auditoria de
+engenharia se perca antes da escrita da tese. Acrescente-lhe conteúdo; não o
+deixe desactualizado.
 
 ---
 
-## 2. YOLO / Ultralytics version compatibility — what is actually verified
+## 1. Alcance do impacto: a auditoria invalida os resultados do Artigo 1?
 
-Two independent axes of variation; only one is fixed and tested.
+**Não.** Isto precisa de ficar bem claro e ser defendido se um revisor colocar
+a mesma pergunta.
 
-**Axis A — Ultralytics package version** (e.g. 8.3.49 pinned on Kaggle vs.
-8.4.103 available in the audit sandbox). A real, verified incompatibility was
-found here: the model's raw training-mode output changed shape between these
-versions (a plain feature list vs. a `{"boxes","scores","feats"}` dict), and
-`v8DetectionLoss`'s expected input shape changed accordingly. Fixed:
-`sentry/train.py` now feeds the raw output to the criterion **unmodified**
-(each version's loss parses its own shape) and uses `extract_feat_list()`
-only for the auxiliary `L_tc` term. Covered by
+O bug crítico encontrado nesta auditoria (`sentry/train.py` a treinar
+silenciosamente nada) vivia num **script autónomo (CLI)**. Os números
+reportados no artigo (Tabela 2, ablação de épocas em 5/10/30) vieram de um
+**caminho de código diferente, já a funcionar**: a célula de Estágio B do
+notebook Kaggle (`[5]`), que tinha a sua própria cópia inline do loop de
+treino, independente do `sentry/train.py`, e já usava a formulação
+supervisionada correcta (`v8DetectionLoss` + `L_tc` auxiliar).
+
+A prova de que esse loop inline treinou de verdade, e não só o raciocínio:
+a perda de treino (`det`) caiu de forma **monótona** à medida que as épocas
+aumentavam (16,7 → 14,1 → 12,7 a 5/10/30 épocas). Esse padrão não pode
+ocorrer se `backward()`/`optimizer.step()` nunca tivessem corrido — é
+exactamente a assinatura que o script autónomo com bug **não conseguiria**
+produzir (nesse caso, a perda ficaria presa no valor inicial para sempre,
+como reproduzido em `tests/test_train.py`).
+
+**Conclusão:** o sobreajuste reportado (a perda de treino cai enquanto o F1
+de teste degrada) é um achado real sobre escassez de dados, não um artefacto
+de código com defeito. O diagnóstico do Artigo 1 mantém-se. O bug é um
+defeito latente num ponto de entrada alternativo que nunca foi usado para
+produzir um número publicado — importante corrigir para que ninguém tropece
+nele mais tarde, mas não muda o que já foi reportado.
+
+Um ponto mais estreito, também importante: a correcção do `coco_to_yolo.py`
+(o layout `clips` vs. `flat`) também não afecta o Artigo 1. O pipeline do
+Le2i (`le2i_to_clips.py`) escreve directamente para o layout canónico
+`clips/<id>/frames+labels` sem nunca passar pelo `coco_to_yolo.py`. Essa
+correcção importa para o **futuro** benchmark PSID-8 em vídeo (CVAT → COCO →
+`coco_to_yolo.py`), não para nada já publicado.
+
+---
+
+## 2. Compatibilidade com versões do YOLO/Ultralytics — o que está de facto verificado
+
+Dois eixos de variação independentes, e agora **ambos verificados ao vivo**.
+
+**Eixo A — versão do pacote `ultralytics`** (ex.: 8.3.49 fixada no Kaggle vs.
+8.4.103 disponível no sandbox de auditoria). Foi aqui que se encontrou uma
+incompatibilidade real e verificada: a saída bruta do modelo em modo treino
+mudou de forma entre estas versões (lista simples de features vs. um `dict`
+`{"boxes","scores","feats"}`), e a forma esperada pelo `v8DetectionLoss`
+mudou também. Corrigido: `sentry/train.py` agora entrega a saída bruta ao
+critério **sem modificação** (cada versão sabe interpretar a sua própria
+forma) e usa `extract_feat_list()` apenas para o termo auxiliar `L_tc`.
+Coberto por
 `tests/test_train.py::test_extract_feat_list_handles_both_ultralytics_shapes`.
 
-**Axis B — YOLO architecture generation** (v8, v9, v10, v11, v12/13, YOLO26).
-**Not fully tested.** What is known, checked against Ultralytics' own
-documentation as of mid-2026:
+**Eixo B — geração da arquitectura YOLO** (v8, v11, v26). **Agora totalmente
+verificado ao vivo**, não apenas por leitura de documentação: descarreguei e
+treinei de facto os três modelos (`yolov8n`, `yolo11n`, `yolo26n`) através do
+mesmo código, confirmando gradientes reais (todos os 27 tensores da TFM
+mudam após o treino em todos os três casos).
 
-| Generation | Head | DFL | Compatible with current `build_criterion` (v8DetectionLoss)? |
+| Geração | Cabeça | DFL | Compatível com `build_criterion`? |
 |---|---|---|---|
-| YOLOv8 (tested: `yolov8n`) | anchor-free `Detect`, decoupled | yes, reg_max=16 | **Verified working** (this audit) |
-| YOLO11 | same `Detect` design as v8 (only backbone/neck blocks differ: C3k2 vs C2f) | yes, reg_max=16 | Likely compatible, **not tested** |
-| YOLO26 | dual head (`Detect`, one-to-one NMS-free + one-to-many), "Progressive Loss"/`E2ELoss` | **removed entirely** | **Not compatible as-is.** `v8DetectionLoss` computes a DFL term that has no counterpart in YOLO26's output. Using YOLO26 as the base detector requires locating and using the loss class Ultralytics ships for it (name unconfirmed at time of writing) and adapting `build_criterion` accordingly. |
+| YOLOv8 (`yolov8n`) | `Detect` ancora-livre, desacoplada | sim, reg_max=16 | **Verificado ao vivo** — `criterion=v8DetectionLoss` |
+| YOLO11 (`yolo11n`) | mesma cabeça `Detect` da v8 (só mudam blocos do backbone/pescoço: C3k2 em vez de C2f) | sim, reg_max=16 | **Verificado ao vivo** — `criterion=v8DetectionLoss` |
+| YOLO26 (`yolo26n`) | cabeça dupla `Detect` (one-to-one sem NMS + one-to-many), `end2end=True` | **removido** (reg_max=1) | **Verificado ao vivo** — `criterion=E2ELoss` |
 
-**Action before using anything other than YOLOv8/YOLO11 as the base
-detector:** repeat the same live-verification procedure used in this audit
-(instantiate the model, inspect `model(x)` in train mode, confirm the
-criterion's expected input shape) before trusting any reported number.
+**A solução que tornou isto possível:** em vez de construir manualmente
+`v8DetectionLoss` com hiperparâmetros fixos, `build_criterion()` agora chama
+`det_model.init_criterion()` — o próprio método que o Ultralytics expõe em
+cada `DetectionModel` para escolher a perda certa (`E2ELoss` quando
+`model.end2end` é verdadeiro, como no YOLO26; `v8DetectionLoss` caso
+contrário). Isto delega a decisão a quem já a conhece de fábrica, em vez de
+eu tentar adivinhá-la ou fixá-la a uma arquitectura específica. O
+`extract_feat_list()` foi generalizado para reconhecer a terceira forma de
+saída observada (o `dict` aninhado `{"one2many": {...}, "one2one": {...}}`
+do YOLO26), usando por omissão o ramo `"one2one"` (o de inferência, sem NMS)
+para o termo `L_tc`.
+
+Coberto por
+`tests/test_train.py::test_stage_b_trains_across_yolo_generations`, que
+descarrega os três modelos, treina cada um por uma época em dados sintéticos,
+e confirma que todos os parâmetros da TFM mudam nos três casos.
+
+**Conclusão actualizada:** pode usar o YOLO26 como detector base para
+facilitar a implantação em dispositivos de borda (a cabeça sem NMS reduz a
+latência de pós-processamento). O código já trata isto correctamente, sem
+necessitar de nenhum ramo específico para essa arquitectura.
 
 ---
 
-## 3. Files touched in this audit (for merging into the working copy)
+## 3. Ficheiros alterados nesta auditoria (para fundir na cópia de trabalho)
 
-**Modified** (replace these exact files):
+**Modificados** (substituir estes ficheiros exactos):
 `psid8/scripts/coco_to_yolo.py`, `psid8/scripts/integrity_check.py`,
 `sentry/aggregate.py`, `sentry/train.py`, `sentry/data.py`, `pyproject.toml`,
-`sentry/__init__.py` (version bump only), `sentryc/graph_builder.py`,
+`sentry/__init__.py` (só a versão), `sentryc/graph_builder.py`,
 `sentryc/metrics.py`, `sentryc/gnn_correlation.py`, `sentry/plots.py`,
 `psid8/scripts/dataset_stats.py`, `tests/run_tests.py`, `tests/test_sentryc.py`,
-`ARCHITECTURE.md`, `CHANGELOG.md`.
+`ARCHITECTURE.md`, `CHANGELOG.md`, **`notebooks/sentry_kaggle.ipynb`** (célula
+[5] reescrita — ver secção 6).
 
-**Added** (new files): `tests/test_psid8_scripts.py`, `tests/test_train.py`.
+**Adicionados** (novos ficheiros): `tests/test_psid8_scripts.py`,
+`tests/test_train.py`, `THESIS_NOTES.md` (este ficheiro).
 
-**Untouched, confirmed by hash before/after**: `sentry/modules.py`,
+**Intocados, confirmados por hash antes/depois**: `sentry/modules.py`,
 `sentry/ultralytics_adapter.py`, `sentry/tubes.py`, `sentry/metrics.py`,
 `sentry/seeds.py`, `sentry/stageb_train.py`,
 `psid8/scripts/le2i_to_clips.py`, `psid8/scripts/build_splits.py`,
 `psid8/scripts/agreement.py`, `psid8/scripts/curate_clips.py`,
 `sentryc/network_stream.py`, `sentryc/alerts.py`.
 
-**The Kaggle notebook (`notebooks/sentry_kaggle.ipynb`) was NOT modified in
-this audit.** Its Stage B cell `[5]` has its own inline copy of the training
-loop (predates and is independent of `sentry/train.py`); it is what produced
-the published numbers and remains valid. It does **not** yet benefit from:
-(a) the Ultralytics-version-shape tolerance (probably moot on Kaggle's pinned
-8.3.49, where the plain-list shape holds), and (b) the batched-training
-speedup (still material — see below). Pending action: rewrite cell `[5]` to
-import `collate_batched`/`run_stage_b` from `sentry.train` instead of
-reimplementing the loop inline, once validated on Kaggle hardware.
-
-**Practical merge instructions:** the safest approach is to overwrite the
-whole local clone with the contents of the delivered zip, then use `git diff`
-against the working copy before committing, so the exact set of changes is
-visible and reviewable rather than merged blindly.
+**Instrução prática de fusão:** a forma mais segura é sobrepor a pasta de
+trabalho local inteira com o conteúdo do zip entregue, e depois usar `git
+diff` contra a cópia de trabalho antes de fazer commit, para que o conjunto
+exacto de alterações fique visível e revisável em vez de fundido às cegas.
 
 ---
 
-## 4. Time/memory experiment: methodology to reproduce at real scale
+## 4. Experiência de tempo/memória: metodologia para reproduzir à escala real
 
-The numbers already measured (2x fewer `model()` calls, 4.05x wall-clock
-reduction for one epoch) were obtained on **toy data on a CPU sandbox**
-(tiny `yolov8n`, 64x64 images, 4 synthetic clips, `batch_size=2`) — real,
-reproducible, but **not** the numbers to cite in the paper. They exist only to
-prove the mechanism (fewer forward calls -> less wall-clock) is real, not just
-theoretical.
+Os números já medidos (2× menos chamadas a `model()`, 4,05× de redução no
+tempo de relógio para uma época) foram obtidos com **dados de brinquedo num
+sandbox CPU** (`yolov8n` minúsculo, imagens 64×64, 4 clipes sintéticos,
+`batch_size=2`) — reais e reproduzíveis, mas **não são os números a citar no
+artigo**. Servem só para provar que o mecanismo (menos chamadas → menos
+tempo) é real, não apenas teórico.
 
-**To get paper-citable numbers**, repeat the same comparison on Kaggle, at the
-paper's actual scale (Le2i clips, `imgsz=640`, `yolov8m`, the real train split,
-`window=8`). Suggested protocol for Section V (or a new subsection on
-implementation/computational cost):
+**Para obter números citáveis**, repita a mesma comparação no Kaggle, à
+escala real do artigo (clipes do Le2i, `imgsz=640`, `yolov8m`, o split de
+treino real, `window=8`). Protocolo sugerido para a Secção V (ou uma nova
+subsecção de implementação/custo computacional):
 
-1. Run one Stage B epoch with the **old** per-clip loop (available in git
-   history / this document's file list) and record wall-clock + peak GPU
-   memory (`torch.cuda.max_memory_allocated()`).
-2. Run one Stage B epoch with the **new** batched loop
-   (`sentry.train.run_stage_b` + `collate_batched`), same data, same seed,
-   same `batch_size`. Record the same two numbers.
-3. Report: forward-call count (exact, from the design: `T` vs `N*T`),
-   wall-clock ratio, peak-memory ratio. State the batch size used, since the
-   call-count reduction scales with it.
-4. Confirm numerical equivalence: the two loops must produce statistically
-   indistinguishable `det`/`tc` trajectories over an epoch (same loss formula,
-   same labels, same model) — report this as a sanity check, since a
-   legitimate speed claim requires showing correctness was preserved.
+1. Correr uma época do Estágio B com o loop antigo, clipe a clipe (disponível
+   no histórico do git / na lista de ficheiros desta secção) e registar o
+   tempo de relógio + memória GPU de pico
+   (`torch.cuda.max_memory_allocated()`).
+2. Correr uma época do Estágio B com o **novo** loop em lote
+   (`sentry.train.run_stage_b` + `collate_batched`), mesmos dados, mesma
+   seed, mesmo `batch_size`. Registar os mesmos dois números.
+3. Reportar: número exacto de chamadas ao modelo (pelo desenho: `T` vs.
+   `N*T`), razão de tempo de relógio, razão de memória de pico. Declare o
+   tamanho do lote usado, já que a redução de chamadas escala com ele.
+4. Confirmar equivalência numérica: os dois loops devem produzir trajectórias
+   de `det`/`tc` estatisticamente indistinguíveis ao longo de uma época
+   (mesma fórmula de perda, mesmos rótulos, mesmo modelo) — reporte isto como
+   verificação de sanidade, já que uma alegação de velocidade legítima exige
+   mostrar que a correcção foi preservada.
 
-`tests/test_train.py::test_batched_loop_uses_fewer_model_calls` is the
-template for step 1-2's call-counting instrumentation; adapt it to real data
-by pointing `VideoClipDataset` at the real `clips_dir`/`splits.json` instead of
-the synthetic fixture.
+`tests/test_train.py::test_batched_loop_uses_fewer_model_calls` é o modelo
+para a instrumentação de contagem de chamadas dos passos 1-2; adapte-o para
+dados reais apontando o `VideoClipDataset` para o `clips_dir`/`splits.json`
+reais em vez da fixture sintética.
 
-Suggested paper framing (Implementation / Computational Cost subsection):
-*"Stage B batches clips of a mini-batch across the batch dimension at each
-timestep rather than processing one clip at a time, reducing the number of
-forward passes from N·T to T per mini-batch (N = batch size, T = window
-length); at batch size [X] on [hardware], this reduced wall-clock time by
-[Y]x and peak memory by [Z]% for one epoch, with no change to the loss
-formulation or the reported metrics."*
-
----
-
-## 5. Synthetic data: what exists and what does not
-
-**What exists (code-correctness testing only, not research data):**
-`tests/test_train.py::_build_synthetic_clips` generates uniform random-noise
-images and one arbitrary fixed bounding box per clip. Its only purpose is to
-prove gradients flow and the batching mechanism works; it has **no resemblance
-to real surveillance footage** and must not be used as a basis for any
-reported experiment or as a seed for data augmentation.
-
-**What does NOT exist yet (research-grade synthetic data):** the
-channel-attack injection generator discussed for the SENTRY-C /
-physical-cyber convergence line (`sentryc/simulate.py` in the plan, not yet
-implemented): extracting real clips from UCF-Crime/Le2i and injecting
-declared, parameterized anomalies (freeze, replay, splice, dropout, blackout,
-timestamp jitter) with a stated coupling parameter and explicit hard
-negatives (packet loss, compression artifacts, genuinely static night scenes).
-This is the next code artifact to build for that research line, not something
-already delivered.
+Sugestão de redacção para o artigo (subsecção de Implementação/Custo
+Computacional): *"O Estágio B agrupa os clipes de um mini-lote ao longo da
+dimensão de lote em cada instante temporal, em vez de processar um clipe de
+cada vez, reduzindo o número de passagens para a frente de N·T para T por
+mini-lote (N = tamanho do lote, T = comprimento da janela); com lote de
+tamanho [X] em [hardware], isto reduziu o tempo de relógio em [Y]× e a
+memória de pico em [Z]% para uma época, sem alteração na formulação da perda
+nem nas métricas reportadas."*
 
 ---
 
-## 6. Open items / next decisions
+## 5. Dados sintéticos: o que existe e o que não existe
 
-- [ ] Decide whether to update the Kaggle notebook's cell `[5]` to use the
-      batched loop (`collate_batched` + `run_stage_b`), and validate on real
-      Kaggle hardware before trusting any new numbers from it.
-- [ ] If a YOLO generation other than v8/11 is considered, re-verify the
-      criterion construction first (see section 2's table).
-- [ ] Re-run the batching comparison at paper scale on Kaggle for citable
-      numbers (section 4's protocol).
-- [ ] Decide on second annotator and begin Phase 0 calibration for the PSID-8
-      video benchmark (unrelated to this audit, still the standing blocker for
-      Article 2).
-- [ ] `sentryc/simulate.py` (channel-attack synthetic generator) remains
-      unbuilt; build only after the PSID-8 benchmark work is underway, per the
-      agreed article ordering (Article 2 -> 3 -> 4).
+**O que existe (só para testar correcção do código, não é dado de
+investigação):** `tests/test_train.py::_build_synthetic_clips` gera imagens
+de ruído uniforme aleatório e uma caixa delimitadora fixa e arbitrária por
+clipe. O único propósito é provar que os gradientes fluem e que o mecanismo
+de lote funciona; **não tem qualquer semelhança com filmagem real de
+vigilância** e não deve ser usado como base de nenhuma experiência reportada
+nem como semente para aumento de dados.
+
+**O que ainda não existe (dados sintéticos de nível de investigação):** o
+gerador de injecção de ataques ao canal discutido para a linha de
+convergência físico-cibernética SENTRY-C (`sentryc/simulate.py`, ainda no
+plano, não implementado): extrair clipes reais do UCF-Crime/Le2i e injectar
+anomalias declaradas e parametrizadas (congelamento, replay, splice,
+perda de frames, blackout, adulteração de timestamp) com um parâmetro de
+acoplamento declarado e negativos difíceis explícitos (perda de pacote real,
+artefactos de compressão, cenas nocturnas genuinamente estáticas). Este é o
+próximo artefacto de código a construir para essa linha de investigação, não
+algo já entregue.
+
+---
+
+## 6. Actualização do notebook (célula [5] reescrita)
+
+A célula [5] do `notebooks/sentry_kaggle.ipynb` (Estágio B) foi reescrita
+para importar `build_criterion`/`run_stage_b` de `sentry.train` e
+`collate_batched` de `sentry.data`, em vez de reimplementar o loop de treino
+inline. Isto significa que a célula do notebook agora beneficia de:
+
+- **Tolerância a versões do Ultralytics e a gerações do YOLO** (secção 2) —
+  se `BEST_A` vier de um YOLOv8, YOLO11 ou YOLO26, a célula funciona sem
+  alteração.
+- **Processamento em lote** — ganho de tempo/memória esperado no T4 do
+  Kaggle, na mesma linha do medido em CPU (secção 4).
+- **Falha ruidosa** em vez de sucesso silencioso, caso uma época não tenha
+  nenhum frame rotulado.
+
+A célula [6] (avaliação do Nível S) **não precisou de alterações**: continua
+a carregar `TFM_CKPT` da mesma forma, e o nome dessa variável foi mantido
+exactamente igual, por compatibilidade.
+
+**Antes de confiar em novos números desta célula**, corra-a no Kaggle e
+confirme que o padrão da Tabela 2 se mantém (a perda de treino a cair
+monotonicamente, o F1 de teste a degradar) — deve manter-se, porque a
+matemática não mudou, só a forma como as chamadas ao modelo são feitas.
+
+---
+
+## 7. Itens em aberto / próximas decisões
+
+- [x] ~~Decidir se a célula [5] do notebook passa a usar o loop em lote~~ —
+      feito.
+- [x] ~~Verificar compatibilidade com YOLO11/YOLO26~~ — feito, verificado ao
+      vivo para os três.
+- [ ] Correr a comparação de lote à escala do artigo no Kaggle, para obter
+      números citáveis (protocolo da secção 4).
+- [ ] Decidir sobre o segundo anotador e começar a calibração da Fase 0 do
+      benchmark de vídeo PSID-8 (não relacionado com esta auditoria, continua
+      a ser o bloqueio para o Artigo 2).
+- [ ] `sentryc/simulate.py` (gerador sintético de ataques ao canal) continua
+      por construir; construir apenas depois de o trabalho do benchmark
+      PSID-8 estar em curso, conforme a ordem de artigos acordada
+      (Artigo 2 → 3 → 4).

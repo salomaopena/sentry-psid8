@@ -71,8 +71,12 @@ def _build_synthetic_clips(root, clip_ids, n_frames=3, imgsz=64, label_frame=2):
 
 
 def _fresh_sentry_model(hidden_ch=8, imgsz=64):
+    return _fresh_sentry_model_from("yolov8n.pt", hidden_ch=hidden_ch, imgsz=imgsz)
+
+
+def _fresh_sentry_model_from(weights, hidden_ch=8, imgsz=64):
     from sentry.ultralytics_adapter import SentryYOLO
-    base = YOLO("yolov8n.pt")   # small, already cached after the first test run
+    base = YOLO(weights)
     model = SentryYOLO(base, hidden_ch=hidden_ch)
     model.reset_stream()
     model(torch.zeros(1, 3, imgsz, imgsz))
@@ -94,13 +98,75 @@ def test_extract_feat_list_handles_both_ultralytics_shapes():
     assert extract_feat_list([a, b, c]) == [a, b, c]
     assert extract_feat_list((a, b, c)) == [a, b, c]
     assert extract_feat_list({"boxes": None, "scores": None, "feats": [a, b, c]}) == [a, b, c]
+
+    # YOLO26's dual-head, end-to-end shape: nested one2many/one2one dicts
+    d, e, f = torch.zeros(4), torch.zeros(5), torch.zeros(6)
+    nested = {"one2many": {"boxes": None, "scores": None, "feats": [a, b, c]},
+             "one2one": {"boxes": None, "scores": None, "feats": [d, e, f]}}
+    assert extract_feat_list(nested) == [d, e, f], "default branch must be 'one2one'"
+    assert extract_feat_list(nested, branch="one2many") == [a, b, c]
+
     try:
         extract_feat_list({"boxes": None})
     except KeyError as e:
-        assert "feats" in str(e)
+        assert "unrecognized keys" in str(e)
     else:
         raise AssertionError("a dict without 'feats' must raise KeyError, not silently misbehave")
     print("test_extract_feat_list_handles_both_ultralytics_shapes OK")
+
+
+def test_stage_b_trains_across_yolo_generations():
+    """Stage B must train correctly regardless of which YOLO generation backs
+    the detector, WITHOUT any architecture-specific branch in this test or in
+    sentry/train.py: build_criterion delegates the loss-class choice to
+    Ultralytics' own `model.init_criterion()`.
+
+    Covers the three shapes/loss classes actually observed in this project:
+    YOLOv8 (v8DetectionLoss, plain feature list), YOLO11 (v8DetectionLoss,
+    same as v8), and YOLO26 (E2ELoss, dual-head, DFL-free: reg_max=1). Each
+    download is small (~5-6MB) and cached after the first run; skipped
+    cleanly if the download is unavailable (no network in the environment).
+    """
+    if not _DEPS_OK:
+        _skip("test_stage_b_trains_across_yolo_generations")
+        return
+    from sentry.data import VideoClipDataset, collate_batched
+    from sentry.train import build_criterion, run_stage_b, set_seed
+
+    for weights in ["yolov8n.pt", "yolo11n.pt", "yolo26n.pt"]:
+        try:
+            YOLO(weights)
+        except Exception as e:
+            print(f"test_stage_b_trains_across_yolo_generations SKIPPED for "
+                  f"{weights} (unavailable: {e})")
+            continue
+
+        set_seed(0)
+        with tempfile.TemporaryDirectory() as d:
+            clips_root = os.path.join(d, "clips")
+            clip_ids = ["clipA", "clipB"]
+            _build_synthetic_clips(clips_root, clip_ids)
+            ds = VideoClipDataset(clips_root, clip_ids, window=3, stride=3,
+                                  imgsz=64, event_only=True)
+            dl = DataLoader(ds, batch_size=2, shuffle=False, collate_fn=collate_batched)
+
+            model = _fresh_sentry_model_from(weights)
+            criterion = build_criterion(model.base, epochs=1)
+            before = {k: v.clone() for k, v in model.tfm.state_dict().items()}
+
+            run_stage_b(model, criterion, dl, epochs=1, lr=1e-2, lambda_tc=1.0,
+                       device=torch.device("cpu"), use_amp=False,
+                       log_fn=lambda *a, **k: None)
+
+            after = model.tfm.state_dict()
+            n_changed = sum(1 for k in before if not torch.equal(before[k], after[k]))
+            assert n_changed == len(before), (
+                f"{weights}: only {n_changed}/{len(before)} TFM tensors changed "
+                f"(criterion={type(criterion).__name__})"
+            )
+            print(f"  {weights}: OK (criterion={type(criterion).__name__}, "
+                  f"{n_changed}/{len(before)} tensors changed)")
+    print("test_stage_b_trains_across_yolo_generations OK")
 
 
 def test_stage_b_actually_updates_tfm_weights():
@@ -231,6 +297,7 @@ def test_batched_loop_uses_fewer_model_calls():
 
 if __name__ == "__main__":
     test_extract_feat_list_handles_both_ultralytics_shapes()
+    test_stage_b_trains_across_yolo_generations()
     test_stage_b_actually_updates_tfm_weights()
     test_zero_signal_epoch_raises_loudly()
     test_batched_loop_uses_fewer_model_calls()
