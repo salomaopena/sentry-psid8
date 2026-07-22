@@ -15,8 +15,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-CLASSES = ["accident", "suspicious_behavior", "crime", "fire",
-           "intrusion", "suspicious_object", "fall", "vandalism"]
+from psid8.schema import CLASS_NAMES as CLASSES  # single source of truth; see psid8/schema.py
 
 _C_MAIN = "#1f77b4"      # blue   - primary series
 _C_ALT = "#d62728"       # red    - contrasting series

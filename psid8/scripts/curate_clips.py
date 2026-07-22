@@ -39,10 +39,15 @@ import os
 import random
 import shutil
 import subprocess
+import sys
 from collections import Counter, defaultdict
 
-CLASSES = ["accident", "suspicious_behavior", "crime", "fire",
-           "intrusion", "suspicious_object", "fall", "vandalism"]
+# Runs as a direct CLI script (locally and on Kaggle via
+# `!python {REPO}/psid8/scripts/curate_clips.py ...`), where Python puts only
+# this file's own directory on sys.path, not the repo root -- so the repo
+# root is added explicitly here, before importing psid8.schema.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from psid8.schema import CLASS_NAMES as CLASSES  # single source of truth; see psid8/schema.py
 
 # Source-label -> candidate PSID-8 class. A hint for the annotator, NOT a label.
 UCF_HINTS = {

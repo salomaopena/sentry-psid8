@@ -10,14 +10,25 @@ Output:
   - mean IoU of matched boxes (greedy IoU matching, same frame,
     non-empty class intersection)
 
-Quality gates (schema.json): kappa >= 0.70 per class; mean IoU >= 0.60.
+Quality gates: read from psid8/schema.json's quality_gates field via
+psid8.schema (never hardcoded here as a second copy); the active thresholds
+are printed at the start of every run.
 """
 import argparse
 import json
+import os
+import sys
+
 import numpy as np
 from sklearn.metrics import cohen_kappa_score
 
-N_CLASSES = 8
+# Runs as a direct CLI script (locally and on Kaggle), where Python puts only
+# this file's own directory on sys.path, not the repo root -- so the repo
+# root is added explicitly here, before importing psid8.schema.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from psid8.schema import CLASS_NAMES, MIN_KAPPA_PER_CLASS, MIN_MEAN_BOX_IOU
+
+N_CLASSES = len(CLASS_NAMES)  # single source of truth; see psid8/schema.py
 
 
 def frame_class_vector(anns, n_classes=N_CLASSES):
@@ -77,9 +88,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("annotator_a")
     ap.add_argument("annotator_b")
-    ap.add_argument("--kappa-min", type=float, default=0.70)
-    ap.add_argument("--iou-min", type=float, default=0.60)
+    ap.add_argument("--kappa-min", type=float, default=MIN_KAPPA_PER_CLASS)
+    ap.add_argument("--iou-min", type=float, default=MIN_MEAN_BOX_IOU)
     args = ap.parse_args()
+    print(f"quality gates (from psid8/schema.json): "
+          f"kappa >= {args.kappa_min}, mean IoU >= {args.iou_min}")
     ka, miou, n = compute(json.load(open(args.annotator_a)), json.load(open(args.annotator_b)))
     print(f"Frames in common: {n}")
     ok = True

@@ -36,11 +36,20 @@ from typing import Any, Sequence
 import networkx as nx
 
 from .network_stream import NetworkEvent
+from psid8.schema import CLASS_NAMES, CLASS_ID  # single source of truth; see psid8/schema.py
 
-# PSID-8 canonical class ids (identical to sentry/: do not renumber).
-CLASS_NAMES = ["accident", "suspicious_behavior", "crime", "fire",
-               "intrusion", "suspicious_object", "fall", "vandalism"]
-CLASS_ID = {n: i for i, n in enumerate(CLASS_NAMES)}
+# CLASS_ID is not used inside this module's own functions, but is part of the
+# package's public surface (re-exported by sentryc/__init__.py); declaring it
+# in __all__ tells static analysis this is an intentional re-export, not dead code.
+__all__ = ["CLASS_NAMES", "CLASS_ID", "Asset", "FusionJustification",
+          "EventGraphBuilder", "SEED_ELIGIBLE", "CONSEQUENCE_ONLY",
+          "SeedConstraintError", "NODE_PHYSICAL", "NODE_NETWORK", "NODE_ASSET",
+          "EDGE_TEMPORAL", "EDGE_SPATIAL", "EDGE_ASSET", "EDGE_PRECEDES"]
+
+# PSID-8 canonical class ids: sourced from psid8/schema.json via psid8.schema,
+# never hardcoded here. Do not renumber schema.json's classes without
+# understanding the downstream impact (labels, prompts, metrics all assume
+# id == position).
 
 #: Classes eligible to seed a correlation subgraph (see module docstring).
 SEED_ELIGIBLE: frozenset[str] = frozenset({
