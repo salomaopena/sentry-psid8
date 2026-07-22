@@ -1,6 +1,6 @@
 # Fixar versões exatas no Kaggle e registrá-las na Tabela IV-B do artigo
 torch>=2.2
-ultralytics>=8.2
+ultralytics>=8.4
 numpy
 opencv-python
 scikit-learn

@@ -232,3 +232,59 @@ matemática não mudou, só a forma como as chamadas ao modelo são feitas.
       por construir; construir apenas depois de o trabalho do benchmark
       PSID-8 estar em curso, conforme a ordem de artigos acordada
       (Artigo 2 → 3 → 4).
+
+
+---
+
+## 8. Ronda no Kaggle: ablação de arquitectura YOLOv8m vs. YOLO26m (Opção C, decidida)
+
+Decisão tomada: o Artigo 1 mantém-se como está, com os números do `yolov8m`
+já reportados (Tabela 2, Secção 5.1, 5.4). O `yolo26m` entra como uma
+**ablação de arquitectura dentro do mesmo artigo**, testando se o padrão
+central (a perda de treino cai monotonicamente enquanto o F1 de teste
+degrada) se replica com um detector de cabeça dupla, sem DFL. Se replicar,
+a conclusão "o gargalo é dado, não arquitectura" deixa de depender de uma
+única arquitectura e fica muito mais robusta. Também produz o número de
+latência de borda que sustenta a direcção de convergência físico-cibernética
+da tese (cabeça `one2one` sem NMS).
+
+**Descoberta adicional durante a preparação desta ronda:** a saída do modelo
+em modo avaliação (não treino) tem um problema semelhante ao já resolvido
+para o modo treino, mas mais traiçoeiro. Nesta versão do Ultralytics, **tanto
+o YOLOv8 como o YOLO26 devolvem a mesma forma** em modo avaliação (`(tensor,
+dict)`), pelo que distinguir por tipo ou forma do tensor **não é seguro** —
+uma primeira tentativa de fazê-lo produziu pontuações fora de `[0,1]`
+silenciosamente (sem erro) para o YOLOv8, um bug que só um teste dedicado
+apanhou. A correcção definitiva delega no próprio `non_max_suppression` do
+Ultralytics com o parâmetro `end2end=`, a mesma via oficial que
+`DetectionPredictor.postprocess` usa — exactamente o mesmo princípio já
+aplicado ao `build_criterion` do treino (secção 2): confiar na bandeira
+`end2end` do modelo, nunca inferir pela forma dos tensores. Implementado em
+`sentry/ultralytics_adapter.py::decode_eval_output`, testado com os dois
+modelos reais (`tests/test_ultralytics_adapter.py`).
+
+### Plano da ronda
+
+**Fase 1 — Estágio A com `yolo26m`, 3 seeds, Le2i/queda.** Use `yolo26m.pt`
+(21,9M parâmetros — o par de capacidade do `yolov8m`, 25,9M; **não** use
+`yolo26n`, que é 10× menor e não seria uma comparação justa). Mesmo protocolo
+de sempre (`run_over_seeds`, seeds `[0,1,2]` pré-registadas).
+
+**Fase 2 — Estágio B com `yolo26m`**, replicando a ablação de épocas
+(5/10/30), usando o código já testado com `E2ELoss`. Pergunta central: o
+padrão da Tabela 2 replica-se?
+
+**Fase 3 — medir tempo/memória do lote em GPU real** (fecha o item pendente
+da secção 4) e a latência do ramo `one2one` sem NMS — o número que sustenta
+o argumento de borda.
+
+**Fase 4 — Nível E, em paralelo se quiser expandir classes/vídeos** (UCF-
+Crime, zero-shot, não depende da escolha YOLOv8/YOLO26 do SENTRY nem do
+Estágio A/B).
+
+**Como não colidir com os resultados existentes:** o notebook foi actualizado
+com uma tag `MODEL_TAG` (derivada de `CFG["model_base"]`) que entra em todos
+os caminhos de saída (`runs/stageA_fall_{MODEL_TAG}_s{seed}`,
+`tfm_{MODEL_TAG}_s0_e{epochs}.pt`, `tierS_fall_{MODEL_TAG}_{tag}.json`), para
+que os resultados do `yolov8m` (já publicados) e do `yolo26m` (a nova
+ablação) nunca se sobreponham nem se apaguem mutuamente.

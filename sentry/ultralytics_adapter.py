@@ -94,6 +94,31 @@ class SentryYOLO(nn.Module):
         return self.base(x)
 
 
+def decode_eval_output(raw, end2end: bool, conf: float = 0.03, iou: float = 0.7,
+                       max_det: int = 100):
+    """Decode a model's EVAL-mode (inference) output into a list of detection
+    dicts `{"bbox": [x1,y1,x2,y2], "score": float, "class_id": int}`,
+    regardless of which YOLO generation produced it.
+
+    `end2end` MUST be passed explicitly (e.g. `sentry.base.end2end`) rather
+    than inferred from `raw`'s type or shape: in the Ultralytics version this
+    was verified against, BOTH end2end (YOLO26) and non-end2end (YOLOv8/11)
+    models return the same `(tensor, dict)` tuple shape in eval mode, so
+    neither the Python type nor a shape heuristic reliably distinguishes them
+    -- only the model's own `end2end` attribute does (the same flag
+    `DetectionModel.init_criterion()` uses to pick the training loss, and the
+    same flag Ultralytics' own `DetectionPredictor.postprocess` passes to
+    `non_max_suppression`). This function mirrors that official code path
+    instead of re-deriving the distinction independently.
+    """
+    from ultralytics.utils.nms import non_max_suppression
+    preds = raw[0] if isinstance(raw, tuple) else raw
+    dets = non_max_suppression(preds, conf, iou, max_det=max_det, end2end=end2end)[0]
+    dets = dets.detach().cpu().numpy()
+    return [{"bbox": r[:4].tolist(), "score": float(r[4]), "class_id": int(r[5])}
+            for r in dets]
+
+
 @torch.no_grad()
 def run_clip_to_alerts(sentry: SentryYOLO, frames, conf_per_class: dict,
                        iou_link: float = 0.5, max_gap: int = 5,
@@ -102,15 +127,21 @@ def run_clip_to_alerts(sentry: SentryYOLO, frames, conf_per_class: dict,
 
     frames: iterable of (1,3,H,W) tensors in temporal order.
     conf_per_class: tau_c thresholds selected ON VALIDATION.
-    nms_fn: function (raw_pred) -> list of dicts {bbox, class_id, score}; on
-            Kaggle use ultralytics.utils.ops.non_max_suppression and convert.
+    nms_fn: function (raw_pred) -> list of dicts {bbox, class_id, score};
+            defaults to `decode_eval_output` with `end2end` read from
+            `sentry.base.end2end`, which already handles both YOLOv8/11
+            (standard NMS) and YOLO26 (end-to-end NMS) via Ultralytics' own
+            `non_max_suppression(..., end2end=...)`.
     """
     sentry.eval()
     sentry.reset_stream()
     linker = TubeLinker(iou_thr=iou_link, max_gap=max_gap)
+    if nms_fn is None:
+        is_e2e = getattr(sentry.base, "end2end", False)
+        nms_fn = lambda raw: decode_eval_output(raw, end2end=is_e2e)
     for t, frame in enumerate(frames):
         raw = sentry(frame)
-        dets = nms_fn(raw) if nms_fn else []
+        dets = nms_fn(raw)
         dets = [d for d in dets if d["score"] >= conf_per_class.get(d["class_id"], 0.25)]
         for d in dets:
             d.setdefault("evidence", {}).update(sentry.last_evidence)
