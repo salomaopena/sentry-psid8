@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sentry-psid8"
-version = "1.4.0"
+version = "1.4.1"
 description = "SENTRY spatiotemporal incident detector + PSID-8 benchmark toolkit"
 requires-python = ">=3.10"
 dependencies = [

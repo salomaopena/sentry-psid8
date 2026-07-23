@@ -1,0 +1,10 @@
+{
+  "timestamp_utc": "2026-07-22T15:08:46.565809+00:00",
+  "manifest_sha256": "3c70ab149e5d8bdc77c121ee0cbbdb7a303979dfc90b2a6a74d205f544dc9194",
+  "splits_sha256": "1320e0fb3f7261472027a0d05a368ea82cdf0211fbd9e15ad9aa63efe4fa46d0",
+  "checks": [
+    "camera_disjoint",
+    "class_coverage"
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,1104 @@
+[
+ {
+  "clip_id": "Coffee_room_01__video_1",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 157
+ },
+ {
+  "clip_id": "Coffee_room_01__video_10",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 362
+ },
+ {
+  "clip_id": "Coffee_room_01__video_11",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 483
+ },
+ {
+  "clip_id": "Coffee_room_01__video_12",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 182
+ },
+ {
+  "clip_id": "Coffee_room_01__video_13",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 244
+ },
+ {
+  "clip_id": "Coffee_room_01__video_14",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 176
+ },
+ {
+  "clip_id": "Coffee_room_01__video_15",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 140
+ },
+ {
+  "clip_id": "Coffee_room_01__video_16",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 177
+ },
+ {
+  "clip_id": "Coffee_room_01__video_17",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 158
+ },
+ {
+  "clip_id": "Coffee_room_01__video_18",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 269
+ },
+ {
+  "clip_id": "Coffee_room_01__video_19",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 213
+ },
+ {
+  "clip_id": "Coffee_room_01__video_2",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 306
+ },
+ {
+  "clip_id": "Coffee_room_01__video_20",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 444
+ },
+ {
+  "clip_id": "Coffee_room_01__video_21",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 182
+ },
+ {
+  "clip_id": "Coffee_room_01__video_22",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 229
+ },
+ {
+  "clip_id": "Coffee_room_01__video_23",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 311
+ },
+ {
+  "clip_id": "Coffee_room_01__video_24",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 267
+ },
+ {
+  "clip_id": "Coffee_room_01__video_25",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 262
+ },
+ {
+  "clip_id": "Coffee_room_01__video_26",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 278
+ },
+ {
+  "clip_id": "Coffee_room_01__video_27",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 253
+ },
+ {
+  "clip_id": "Coffee_room_01__video_28",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 175
+ },
+ {
+  "clip_id": "Coffee_room_01__video_29",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 328
+ },
+ {
+  "clip_id": "Coffee_room_01__video_3",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 304
+ },
+ {
+  "clip_id": "Coffee_room_01__video_30",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 145
+ },
+ {
+  "clip_id": "Coffee_room_01__video_31",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 265
+ },
+ {
+  "clip_id": "Coffee_room_01__video_32",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 305
+ },
+ {
+  "clip_id": "Coffee_room_01__video_33",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 227
+ },
+ {
+  "clip_id": "Coffee_room_01__video_34",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 415
+ },
+ {
+  "clip_id": "Coffee_room_01__video_35",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 231
+ },
+ {
+  "clip_id": "Coffee_room_01__video_36",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 1203
+ },
+ {
+  "clip_id": "Coffee_room_01__video_37",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 206
+ },
+ {
+  "clip_id": "Coffee_room_01__video_38",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 352
+ },
+ {
+  "clip_id": "Coffee_room_01__video_39",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 157
+ },
+ {
+  "clip_id": "Coffee_room_01__video_4",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 207
+ },
+ {
+  "clip_id": "Coffee_room_01__video_40",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 350
+ },
+ {
+  "clip_id": "Coffee_room_01__video_41",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 382
+ },
+ {
+  "clip_id": "Coffee_room_01__video_42",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 159
+ },
+ {
+  "clip_id": "Coffee_room_01__video_43",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 718
+ },
+ {
+  "clip_id": "Coffee_room_01__video_44",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 133
+ },
+ {
+  "clip_id": "Coffee_room_01__video_45",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 215
+ },
+ {
+  "clip_id": "Coffee_room_01__video_46",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 292
+ },
+ {
+  "clip_id": "Coffee_room_01__video_47",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 729
+ },
+ {
+  "clip_id": "Coffee_room_01__video_48",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 779
+ },
+ {
+  "clip_id": "Coffee_room_01__video_5",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 181
+ },
+ {
+  "clip_id": "Coffee_room_01__video_6",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 239
+ },
+ {
+  "clip_id": "Coffee_room_01__video_7",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 174
+ },
+ {
+  "clip_id": "Coffee_room_01__video_8",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 258
+ },
+ {
+  "clip_id": "Coffee_room_01__video_9",
+  "camera_id": "Coffee_room_01",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 206
+ },
+ {
+  "clip_id": "Coffee_room_02__video_49",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 492
+ },
+ {
+  "clip_id": "Coffee_room_02__video_50",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 1954
+ },
+ {
+  "clip_id": "Coffee_room_02__video_51",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 203
+ },
+ {
+  "clip_id": "Coffee_room_02__video_52",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 215
+ },
+ {
+  "clip_id": "Coffee_room_02__video_53",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 383
+ },
+ {
+  "clip_id": "Coffee_room_02__video_54",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 251
+ },
+ {
+  "clip_id": "Coffee_room_02__video_55",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 323
+ },
+ {
+  "clip_id": "Coffee_room_02__video_56",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 431
+ },
+ {
+  "clip_id": "Coffee_room_02__video_57",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 563
+ },
+ {
+  "clip_id": "Coffee_room_02__video_58",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 311
+ },
+ {
+  "clip_id": "Coffee_room_02__video_59",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 251
+ },
+ {
+  "clip_id": "Coffee_room_02__video_60",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 275
+ },
+ {
+  "clip_id": "Coffee_room_02__video_61",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 1314
+ },
+ {
+  "clip_id": "Coffee_room_02__video_62",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 282
+ },
+ {
+  "clip_id": "Coffee_room_02__video_63",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 596
+ },
+ {
+  "clip_id": "Coffee_room_02__video_64",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [
+   6
+  ],
+  "n_frames": 212
+ },
+ {
+  "clip_id": "Coffee_room_02__video_65",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 711
+ },
+ {
+  "clip_id": "Coffee_room_02__video_66",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 298
+ },
+ {
+  "clip_id": "Coffee_room_02__video_67",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 347
+ },
+ {
+  "clip_id": "Coffee_room_02__video_68",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 1607
+ },
+ {
+  "clip_id": "Coffee_room_02__video_69",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 1283
+ },
+ {
+  "clip_id": "Coffee_room_02__video_70",
+  "camera_id": "Coffee_room_02",
+  "scenario": "Coffee_room",
+  "classes": [],
+  "n_frames": 839
+ },
+ {
+  "clip_id": "Home_01__video_1",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 264
+ },
+ {
+  "clip_id": "Home_01__video_10",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 312
+ },
+ {
+  "clip_id": "Home_01__video_11",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 312
+ },
+ {
+  "clip_id": "Home_01__video_12",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_13",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_14",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 288
+ },
+ {
+  "clip_id": "Home_01__video_15",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 238
+ },
+ {
+  "clip_id": "Home_01__video_16",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 264
+ },
+ {
+  "clip_id": "Home_01__video_17",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_18",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_19",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_01__video_2",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_20",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_21",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_22",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_23",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_24",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_01__video_25",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 213
+ },
+ {
+  "clip_id": "Home_01__video_26",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_27",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_28",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_29",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 271
+ },
+ {
+  "clip_id": "Home_01__video_3",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_30",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_01__video_4",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_01__video_5",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_01__video_6",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_01__video_7",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_01__video_8",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 285
+ },
+ {
+  "clip_id": "Home_01__video_9",
+  "camera_id": "Home_01",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 336
+ },
+ {
+  "clip_id": "Home_02__video_31",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 312
+ },
+ {
+  "clip_id": "Home_02__video_32",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_02__video_33",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_02__video_34",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_35",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_36",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_02__video_37",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [
+   6
+  ],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_38",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_02__video_39",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 192
+ },
+ {
+  "clip_id": "Home_02__video_40",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_41",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_42",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 168
+ },
+ {
+  "clip_id": "Home_02__video_43",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 168
+ },
+ {
+  "clip_id": "Home_02__video_44",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 314
+ },
+ {
+  "clip_id": "Home_02__video_45",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_46",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 264
+ },
+ {
+  "clip_id": "Home_02__video_47",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 288
+ },
+ {
+  "clip_id": "Home_02__video_48",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_49",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 312
+ },
+ {
+  "clip_id": "Home_02__video_50",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 312
+ },
+ {
+  "clip_id": "Home_02__video_51",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 264
+ },
+ {
+  "clip_id": "Home_02__video_52",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_53",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_54",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_55",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_56",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 360
+ },
+ {
+  "clip_id": "Home_02__video_57",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 240
+ },
+ {
+  "clip_id": "Home_02__video_58",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 336
+ },
+ {
+  "clip_id": "Home_02__video_59",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 216
+ },
+ {
+  "clip_id": "Home_02__video_60",
+  "camera_id": "Home_02",
+  "scenario": "Home",
+  "classes": [],
+  "n_frames": 312
+ }
+]

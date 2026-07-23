@@ -1,5 +1,14 @@
 """Single loader for psid8/schema.json.
 
+Before this module existed, `schema.json` was documentation only: every
+consumer (sentryc/graph_builder.py, psid8/scripts/curate_clips.py,
+sentry/plots.py, notebooks/sentry_kaggle.ipynb) hardcoded its own copy of the
+8-class list, and psid8/scripts/agreement.py hardcoded its own copy of the
+quality-gate thresholds (kappa >= 0.70, mean IoU >= 0.60) as CLI defaults. All
+copies happened to agree at audit time, but nothing enforced that agreement --
+exactly the kind of silent-drift risk this project's own `sentry/aggregate.py`
+duplication (fixed in an earlier audit pass) already demonstrated in practice.
+
 This module makes `schema.json` load-bearing: every consumer above now
 imports `CLASS_NAMES`/`CLASS_ID` (or the quality gates) from here, so there is
 exactly one place a class list or threshold can be edited, and
