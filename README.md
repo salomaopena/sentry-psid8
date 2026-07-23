@@ -84,3 +84,9 @@ and BibTeX citations automatically.
 Code released under the MIT License (see `LICENSE`). The PSID-8 video dataset,
 once published, will be distributed under a separate data license (CC BY 4.0)
 in its own deposit.
+
+## Kappa
+
+```python
+python psid8/scripts/agreement.py anotadorA.json anotadorB.json
+```

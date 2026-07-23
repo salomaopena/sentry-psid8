@@ -1,0 +1,240 @@
+{
+  "name": "PSID-8",
+  "version": "0.3.0",
+  "description": "Annotation schema for the PSID-8 benchmark: 8 physical-security incident classes with frame-level bounding boxes and compositional attributes (object, action, environment, context). Vocabularies are imported verbatim from the executable CVAT label configuration (attributes.json) validated in the annotation pilot. Video content is NOT redistributed; annotations reference clips from established third-party research datasets (see source_datasets).",
+  "annotation_unit": "bounding box per frame, linked to an event_id persistent across the clip",
+  "multi_label": true,
+  "cvat_export_format": "COCO 1.0 (instances_default.json). NEVER export as YOLO from CVAT: attributes would be lost. Convert with psid8/scripts/coco_to_yolo.py, which writes YOLO labels plus .attrs.json sidecars.",
+
+  "source_datasets": [
+    {
+      "dataset_id": "ucf_crime",
+      "dataset_name": "UCF-Crime",
+      "official_url": "https://www.crcv.ucf.edu/projects/real-world/",
+      "citation": "Sultani, W., Chen, C., Shah, M. (2018). Real-world Anomaly Detection in Surveillance Videos. CVPR.",
+      "license_terms": "Research use only, as per CRCV/UCF distribution terms. No redistribution of video content.",
+      "video_folder_structure": "UCF_Crimes/Videos/<category>/<video_name>.mp4",
+      "redistribution_of_video": false
+    },
+    {
+      "dataset_id": "le2i_fall",
+      "dataset_name": "Le2i (fall detection)",
+      "official_url": "http://le2i.cnrs.fr/Fall-detection-Dataset",
+      "citation": "Charfi, I. et al. (2013). Optimized spatio-temporal descriptors for real-time fall detection. Journal of Electronic Imaging, 22(4).",
+      "license_terms": "Academic/research use only. No redistribution of video content.",
+      "redistribution_of_video": false
+    },
+    {
+      "dataset_id": "xd_violence",
+      "dataset_name": "XD-Violence",
+      "official_url": "https://roc-ng.github.io/XD-Violence/",
+      "citation": "Wu, P. et al. (2020). Not only look, but also listen: Learning multimodal violence detection under weak supervision. ECCV.",
+      "license_terms": "Research use only. No redistribution of video content.",
+      "redistribution_of_video": false
+    },
+    {
+      "dataset_id": "sfdvd",
+      "dataset_name": "SFDVD (Smoke and Fire Detection Videos Dataset)",
+      "official_url": "https://unidata.pro/datasets/smoke-and-fire-detection-videos-dataset/",
+      "citation": "Unidata (2024). Smoke and Fire Detection Videos Dataset.",
+      "license_terms": "As per provider terms at time of access. No redistribution of video content.",
+      "redistribution_of_video": false
+    }
+  ],
+
+  "licensing": {
+    "schema_and_annotations_license": "CC BY 4.0",
+    "code_and_scripts_license": "MIT",
+    "video_content_license": "inherits_from_source_dataset (see source_datasets[])",
+    "notice": "PSID-8 taxonomy, annotations, and code are original contributions released under CC BY 4.0. They do NOT include or redistribute any video content. Users must independently obtain source videos from the providers listed in source_datasets[] and comply with each provider's own terms (typically research-only use), which apply exclusively to the video files themselves, not to this schema or its annotations."
+  },
+
+  "classes": [
+    {
+      "id": 0,
+      "name": "accident",
+      "temporal": true,
+      "operational_definition": "Unintentional collision or impact involving vehicle(s) and/or person(s), from first contact until the scene stabilizes.",
+      "action_vocabulary": [
+        "vehicle_collision",
+        "mass_fall",
+        "medical_emergency",
+        "other"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "suspicious_behavior",
+      "temporal": true,
+      "operational_definition": "Movement pattern inconsistent with normal use of the site: loitering (>=2 passes by the same point), prolonged observation of access points, testing doors/windows, following a person.",
+      "action_vocabulary": [
+        "running_out_of_context",
+        "loitering",
+        "chasing",
+        "sudden_flight",
+        "other"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "crime",
+      "temporal": true,
+      "operational_definition": "Physical assault, robbery, theft in progress, or threat with a visible weapon, from the start of the hostile action until the parties separate.",
+      "action_vocabulary": [
+        "assault",
+        "fighting",
+        "theft",
+        "robbery",
+        "armed_threat",
+        "break_in",
+        "other"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "fire",
+      "temporal": false,
+      "operational_definition": "Visible uncontrolled flame or smoke. Annotate the visible flame/smoke region, not the presumed source.",
+      "action_vocabulary": [
+        "open_flame",
+        "smoke",
+        "vehicle_fire",
+        "structure_fire",
+        "other"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "intrusion",
+      "temporal": true,
+      "operational_definition": "Person crossing a perimeter/restricted zone defined in the scenario metadata, in any posture (standing, crouching, crawling).",
+      "action_vocabulary": [
+        "fence_climbing",
+        "gate_breach",
+        "restricted_area_entry",
+        "perimeter_crossing",
+        "other"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "suspicious_object",
+      "temporal": true,
+      "operational_definition": "Portable object that remains without a visible carrier for >= T_abandon (default 30 s; recorded per scenario) in a circulation area.",
+      "action_vocabulary": [
+        "abandoned_bag",
+        "abandoned_package",
+        "weapon_present",
+        "abandoned_luggage",
+        "other"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "fall",
+      "temporal": true,
+      "operational_definition": "Unintentional transition from an upright/seated posture to the ground. Annotate from loss of balance until rest on the ground. A person already lying down WITHOUT an observed transition is NOT a fall.",
+      "action_vocabulary": [
+        "person_collapsed",
+        "faint",
+        "fall_from_height",
+        "other"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "vandalism",
+      "temporal": true,
+      "operational_definition": "Intentional property damage: graffiti in progress, breaking glass/equipment, damage to a third party's vehicle.",
+      "action_vocabulary": [
+        "glass_breaking",
+        "property_destruction",
+        "graffiti",
+        "equipment_damage",
+        "other"
+      ]
+    }
+  ],
+
+  "compositional_attributes": {
+    "object": {
+      "desc": "central agent/entity of the event",
+      "values": [
+        "person",
+        "crowd",
+        "victim",
+        "offender",
+        "car",
+        "motorcycle",
+        "truck",
+        "bicycle",
+        "bus",
+        "suspicious_object",
+        "backpack",
+        "bag_luggage",
+        "weapon",
+        "fire_flame",
+        "smoke",
+        "property",
+        "glass_window",
+        "fence_gate",
+        "door",
+        "animal",
+        "other"
+      ]
+    },
+    "action": {
+      "desc": "event verb (class-specific vocabularies above)",
+      "values": "see classes[*].action_vocabulary"
+    },
+    "environment": {
+      "desc": "scenario location type",
+      "values": [
+        "controlled_access",
+        "public_street",
+        "indoor",
+        "perimeter_fence",
+        "night",
+        "daytime",
+        "crowd_proximity",
+        "parking_lot",
+        "other"
+      ]
+    },
+    "context": {
+      "desc": "condition that makes the event an incident",
+      "values": ["normal", "abnormal"]
+    }
+  },
+
+  "event_fields": [
+    "event_id",
+    "class_ids",
+    "frame_start",
+    "frame_end",
+    "attributes",
+    "co_occurs_with",
+    "clip_reference"
+  ],
+
+  "clip_reference_schema": {
+    "desc": "Links an annotated clip back to its original source dataset and file, without embedding or redistributing the video itself.",
+    "fields": {
+      "source_dataset_id": "must match one of source_datasets[*].dataset_id",
+      "original_filename": "exact filename as distributed by the source provider (e.g., Robbery048_x264.mp4)",
+      "clip_start_sec": "start offset within the original file",
+      "clip_end_sec": "end offset within the original file",
+      "fps_original": "frame rate of the original file, needed to reconstruct frame_start/frame_end correctly"
+    }
+  },
+
+  "negatives_policy": "Each scenario must contain negative clips (normal operation) at a ratio >= 1:1 with positive clips, including documented hard negatives (e.g., person lying down without a fall; barbecue smoke; sports running).",
+
+  "quality_gates": {
+    "double_annotation_pct": 20,
+    "min_kappa_per_class": 0.7,
+    "min_mean_box_iou": 0.6,
+    "min_clip_reference_coverage_pct": 100,
+    "adjudication": "a third annotator resolves disagreements; decisions are logged"
+  }
+}
